@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Your AYUSH AI Dashboard">
+    <meta name="theme-color" content="#10b981">
+    <title>Dashboard - AYUSH AI Assistant</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <span class="logo-icon">🌿</span>
+                <span class="logo-text">AYUSH AI</span>
+            </div>
+            <nav class="nav">
+                <a href="dashboard.html" class="nav-link active">Dashboard</a>
+                <a href="index.html" class="nav-link">Analyze</a>
+                <a href="#history" class="nav-link">History</a>
+                <div class="user-menu">
+                    <button class="user-btn" id="userMenuBtn">
+                        <span class="user-avatar">👤</span>
+                        <span id="userName">User</span>
+                    </button>
+                    <div class="user-dropdown" id="userDropdown">
+                        <a href="#profile">Profile</a>
+                        <a href="#settings">Settings</a>
+                        <a href="#" id="logoutBtn">Logout</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Dashboard Content -->
+    <main class="dashboard-main">
+        <div class="container">
+            <!-- Welcome Section -->
+            <section class="welcome-section">
+                <div class="welcome-card">
+                    <div class="welcome-content">
+                        <h1>Welcome back, <span id="userNameDisplay">User</span>! 👋</h1>
+                        <p>Continue your natural wellness journey</p>
+                    </div>
+                    <button class="quick-analyze-btn" onclick="window.location.href='index.html'">
+                        ✨ New Analysis
+                    </button>
+                </div>
+            </section>
+
+            <!-- Stats Section -->
+            <section class="stats-section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-content">
+                            <h3 id="totalConsultations">0</h3>
+                            <p>Total Consultations</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🌿</div>
+                        <div class="stat-content">
+                            <h3 id="remediesUsed">0</h3>
+                            <p>Remedies Tried</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📅</div>
+                        <div class="stat-content">
+                            <h3 id="daysActive">0</h3>
+                            <p>Days Active</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⭐</div>
+                        <div class="stat-content">
+                            <h3 id="wellnessScore">85</h3>
+                            <p>Wellness Score</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recent Activity -->
+            <section class="activity-section">
+                <h2 class="section-title">Recent Consultations</h2>
+                <div id="recentActivity" class="activity-list">
+                    <!-- Activity items will be loaded here -->
+                    <div class="empty-state">
+                        <div class="empty-icon">🌱</div>
+                        <h3>No consultations yet</h3>
+                        <p>Start your wellness journey by analyzing your symptoms</p>
+                        <button class="primary-btn" onclick="window.location.href='index.html'">
+                            Get Started
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Actions -->
+            <section class="quick-actions-section">
+                <h2 class="section-title">Quick Actions</h2>
+                <div class="actions-grid">
+                    <div class="action-card" onclick="window.location.href='index.html'">
+                        <div class="action-icon">🔍</div>
+                        <h3>Analyze Symptoms</h3>
+                        <p>Get AI-powered AYUSH recommendations</p>
+                    </div>
+                    <div class="action-card">
+                        <div class="action-icon">📚</div>
+                        <h3>Browse Remedies</h3>
+                        <p>Explore our database of natural treatments</p>
+                    </div>
+                    <div class="action-card">
+                        <div class="action-icon">🧘</div>
+                        <h3>Yoga Guide</h3>
+                        <p>Learn yoga poses for wellness</p>
+                    </div>
+                    <div class="action-card">
+                        <div class="action-icon">🍽️</div>
+                        <h3>Diet Plans</h3>
+                        <p>Personalized Ayurvedic diet recommendations</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 AYUSH AI Assistant. For educational purposes only.</p>
+        </div>
+    </footer>
+
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

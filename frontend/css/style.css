@@ -736,3 +736,99 @@ body {
         width: 100%;
     }
 }
+
+
+/* Auth Buttons in Header */
+.auth-buttons {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.signup-btn {
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white !important;
+    border-radius: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.signup-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+}
+
+/* User Menu in Header */
+.user-menu {
+    position: relative;
+}
+
+.user-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: white;
+    border: 2px solid rgba(16, 185, 129, 0.2);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 600;
+    font-family: inherit;
+}
+
+.user-btn:hover {
+    border-color: var(--primary);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+}
+
+.user-avatar {
+    font-size: 1.5rem;
+}
+
+.user-dropdown {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    background: white;
+    border: 2px solid rgba(16, 185, 129, 0.2);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    min-width: 180px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s;
+    z-index: 1000;
+}
+
+.user-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.user-dropdown a {
+    display: block;
+    padding: 0.75rem 1.25rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.user-dropdown a:hover {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    color: var(--primary);
+}
+
+.user-dropdown a:first-child {
+    border-radius: 10px 10px 0 0;
+}
+
+.user-dropdown a:last-child {
+    border-radius: 0 0 10px 10px;
+    color: var(--danger);
+}

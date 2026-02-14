@@ -32,6 +32,22 @@
                 <a href="#home" class="nav-link active">Home</a>
                 <a href="#about" class="nav-link">About</a>
                 <a href="#history" class="nav-link">History</a>
+                <div id="authButtons" class="auth-buttons">
+                    <a href="login.html" class="nav-link">Login</a>
+                    <a href="signup.html" class="signup-btn">Sign Up</a>
+                </div>
+                <div id="userMenu" class="user-menu" style="display: none;">
+                    <button class="user-btn" id="userMenuBtn">
+                        <span class="user-avatar">👤</span>
+                        <span id="userName">User</span>
+                    </button>
+                    <div class="user-dropdown" id="userDropdown">
+                        <a href="dashboard.html">Dashboard</a>
+                        <a href="#profile">Profile</a>
+                        <a href="#settings">Settings</a>
+                        <a href="#" id="logoutBtn">Logout</a>
+                    </div>
+                </div>
             </nav>
         </div>
     </header>
@@ -158,6 +174,38 @@
     </footer>
 
     <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
     <script src="js/app.js"></script>
+    <script>
+        // Initialize auth UI
+        document.addEventListener('DOMContentLoaded', () => {
+            authManager.updateUI();
+            
+            // Setup user menu if logged in
+            if (authManager.isLoggedIn()) {
+                const userMenuBtn = document.getElementById('userMenuBtn');
+                const userDropdown = document.getElementById('userDropdown');
+                const logoutBtn = document.getElementById('logoutBtn');
+                
+                if (userMenuBtn) {
+                    userMenuBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        userDropdown.classList.toggle('show');
+                    });
+                }
+                
+                if (logoutBtn) {
+                    logoutBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        authManager.logout();
+                    });
+                }
+                
+                document.addEventListener('click', () => {
+                    if (userDropdown) userDropdown.classList.remove('show');
+                });
+            }
+        });
+    </script>
 </body>
 </html>
