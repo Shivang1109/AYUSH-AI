@@ -13,14 +13,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Professional Header -->
+    <!-- Professional Header with Hierarchy -->
     <header class="app-header">
         <div class="header-content">
             <div class="brand">
-                <span class="brand-icon">🕉️</span>
-                <span class="brand-name">AYUSH AI</span>
-                <span class="brand-tagline">Wellness Assistant</span>
+                <div class="brand-main">
+                    <span class="brand-icon">🕉️</span>
+                    <span class="brand-name">AYUSH AI</span>
+                </div>
+                <p class="brand-subtitle">Ancient Wisdom. Modern Intelligence.</p>
             </div>
+            
+            <div class="header-divider"></div>
             
             <div class="header-actions">
                 <div class="language-switch">
@@ -91,7 +95,12 @@
             <!-- Chat Interface -->
             <section class="chat-section">
                 <div class="chat-container" id="chatContainer">
-                    <!-- Messages will be added here -->
+                    <!-- Empty State -->
+                    <div class="empty-state" id="emptyState">
+                        <div class="empty-icon">🌿</div>
+                        <h3>Welcome to Your Wellness Journey</h3>
+                        <p>Describe your symptoms to receive personalized natural recommendations from traditional AYUSH practices.</p>
+                    </div>
                 </div>
 
                 <!-- Input Area -->

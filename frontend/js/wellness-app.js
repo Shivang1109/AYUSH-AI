@@ -168,13 +168,25 @@ function showEmergencyAlert() {
 
 function addMessage(text, type) {
     const chatContainer = document.getElementById('chatContainer');
+    
+    // Hide empty state on first message
+    const emptyState = document.getElementById('emptyState');
+    if (emptyState) {
+        emptyState.style.display = 'none';
+    }
+    
     const message = document.createElement('div');
     message.className = `message ${type}`;
+    
+    const avatar = document.createElement('div');
+    avatar.className = 'message-avatar';
+    avatar.textContent = type === 'user' ? '👤' : '🌿';
     
     const bubble = document.createElement('div');
     bubble.className = 'message-bubble';
     bubble.textContent = text;
     
+    message.appendChild(avatar);
     message.appendChild(bubble);
     chatContainer.appendChild(message);
     
