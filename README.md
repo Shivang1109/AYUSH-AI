@@ -26,13 +26,20 @@ An AI-powered health assistant that provides personalized AYUSH (Ayurveda, Yoga,
 ```
 ayush-ai-assistant/
 ├── frontend/
-│   ├── index.html          # Main HTML file
+│   ├── index.html          # Main application (premium Ayurvedic UI)
+│   ├── login.html          # Login page
+│   ├── signup.html         # Registration page
+│   ├── dashboard.html      # User dashboard
 │   ├── test.html           # API testing page
 │   ├── css/
-│   │   └── style.css       # Styling
+│   │   ├── main.css        # Main application styles
+│   │   ├── auth.css        # Authentication pages styles
+│   │   └── dashboard.css   # Dashboard styles
 │   └── js/
 │       ├── config.js       # API configuration
-│       └── app.js          # Main application logic
+│       ├── auth.js         # Authentication logic
+│       ├── main.js         # Main application logic
+│       └── dashboard.js    # Dashboard functionality
 ├── backend/
 │   ├── main.py             # FastAPI backend
 │   ├── requirements.txt    # Python dependencies

@@ -3,209 +3,372 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="AI-powered AYUSH health recommendations">
-    <meta name="theme-color" content="#10b981">
-    <title>AYUSH AI Assistant - Natural Health Recommendations</title>
+    <meta name="description" content="AI-powered AYUSH wellness assistant">
+    <meta name="theme-color" content="#8b5cf6">
+    <title>AYUSH AI - Your Wellness Companion</title>
     <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/main.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script>
-        // Register service worker for PWA
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js')
-                .then(reg => console.log('Service Worker registered'))
-                .catch(err => console.log('Service Worker registration failed'));
-        }
-    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <div class="logo">
-                <span class="logo-icon">🌿</span>
-                <span class="logo-text">AYUSH AI</span>
+    <!-- Professional Header with Hierarchy -->
+    <header class="app-header">
+        <div class="header-content">
+            <div class="brand">
+                <div class="brand-main">
+                    <span class="brand-icon">🕉️</span>
+                    <span class="brand-name">AYUSH AI</span>
+                </div>
+                <p class="brand-subtitle">Ancient Wisdom. Modern Intelligence.</p>
             </div>
-            <nav class="nav">
-                <a href="#home" class="nav-link active">Home</a>
-                <a href="#about" class="nav-link">About</a>
-                <a href="#history" class="nav-link">History</a>
-                <div id="authButtons" class="auth-buttons">
-                    <a href="login.html" class="nav-link">Login</a>
-                    <a href="signup.html" class="signup-btn">Sign Up</a>
+            
+            <div class="header-divider"></div>
+            
+            <div class="header-actions">
+                <div class="language-switch">
+                    <button class="lang-option active" data-lang="en">EN</button>
+                    <button class="lang-option" data-lang="hi">हिंदी</button>
                 </div>
-                <div id="userMenu" class="user-menu" style="display: none;">
-                    <button class="user-btn" id="userMenuBtn">
-                        <span class="user-avatar">👤</span>
-                        <span id="userName">User</span>
-                    </button>
-                    <div class="user-dropdown" id="userDropdown">
-                        <a href="dashboard.html">Dashboard</a>
-                        <a href="#profile">Profile</a>
-                        <a href="#settings">Settings</a>
-                        <a href="#" id="logoutBtn">Logout</a>
-                    </div>
+                
+                <div class="user-profile">
+                    <div class="user-avatar">👤</div>
+                    <span class="user-name" id="headerUserName">Guest</span>
                 </div>
-            </nav>
+                
+                <button class="logout-btn" id="headerLogout">Logout</button>
+            </div>
         </div>
     </header>
 
-    <!-- Hero Section -->
-    <section id="home" class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <h1 class="hero-title">AI-Powered AYUSH Health Assistant</h1>
-                <p class="hero-subtitle">Get personalized Ayurveda, Yoga, Unani, Siddha & Homeopathy recommendations based on your symptoms</p>
+    <div class="app-container">
+        <!-- Sidebar - History Panel -->
+        <aside class="sidebar" id="historySidebar">
+            <div class="sidebar-header">
+                <h3>📋 Previous Consultations</h3>
+                <button class="sidebar-toggle" id="sidebarToggle">✕</button>
             </div>
-        </div>
-    </section>
-
-    <!-- Main App Section -->
-    <section class="app-section">
-        <div class="container">
-            <div class="app-card">
-                <!-- Language Toggle -->
-                <div class="language-toggle">
-                    <button class="lang-btn active" data-lang="en">English</button>
-                    <button class="lang-btn" data-lang="hi">हिंदी</button>
+            <div class="history-list" id="historyList">
+                <div class="empty-history">
+                    <p>No consultations yet</p>
                 </div>
+            </div>
+        </aside>
 
-                <!-- Symptom Input -->
-                <div class="input-section">
-                    <label for="symptoms" class="input-label">Describe your symptoms</label>
-                    <textarea 
-                        id="symptoms" 
-                        class="symptom-input" 
-                        placeholder="E.g., I have a headache, feeling tired, and have a mild fever..."
-                        rows="5"
-                    ></textarea>
-                    <button id="analyzeBtn" class="analyze-btn">
-                        <span class="btn-text">Analyze Symptoms</span>
-                        <span class="btn-loader" style="display: none;">
-                            <span class="spinner"></span> Analyzing...
-                        </span>
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Hero Welcome Section -->
+            <section class="welcome-hero">
+                <h1 class="welcome-title">
+                    <span class="namaste">🙏 Namaste</span>
+                    <span class="welcome-text">How can I help your wellness today?</span>
+                </h1>
+                
+                <!-- Quick Action Buttons -->
+                <div class="quick-actions">
+                    <button class="quick-btn" data-symptom="I have digestion issues, bloating and constipation">
+                        <span class="quick-icon">🍽️</span>
+                        <span class="quick-label">Digestion Issues</span>
+                    </button>
+                    <button class="quick-btn" data-symptom="I am feeling stressed and anxious">
+                        <span class="quick-icon">🧘</span>
+                        <span class="quick-label">Stress & Anxiety</span>
+                    </button>
+                    <button class="quick-btn" data-symptom="I want to boost my immunity">
+                        <span class="quick-icon">💪</span>
+                        <span class="quick-label">Immunity Boost</span>
                     </button>
                 </div>
 
-                <!-- Results Section -->
-                <div id="results" class="results-section" style="display: none;">
-                    <!-- Condition Card -->
-                    <div class="condition-card">
-                        <div class="condition-header">
-                            <h2 id="conditionName" class="condition-name"></h2>
-                            <span id="severityBadge" class="severity-badge"></span>
+                <!-- Symptom Tag Suggestions -->
+                <div class="symptom-tags">
+                    <span class="tag-label">Common symptoms:</span>
+                    <button class="symptom-tag" data-tag="Headache">Headache</button>
+                    <button class="symptom-tag" data-tag="Cold & Cough">Cold & Cough</button>
+                    <button class="symptom-tag" data-tag="Joint Pain">Joint Pain</button>
+                    <button class="symptom-tag" data-tag="Fatigue">Fatigue</button>
+                    <button class="symptom-tag" data-tag="Insomnia">Insomnia</button>
+                </div>
+            </section>
+
+            <!-- Chat Interface -->
+            <section class="chat-section">
+                <div class="chat-container" id="chatContainer">
+                    <!-- Empty State -->
+                    <div class="empty-state" id="emptyState">
+                        <div class="empty-icon">🌿</div>
+                        <h3>Welcome to Your Wellness Journey</h3>
+                        <p>Describe your symptoms to receive personalized natural recommendations from traditional AYUSH practices.</p>
+                    </div>
+                </div>
+
+                <!-- Input Area -->
+                <div class="input-area">
+                    <textarea 
+                        id="symptomInput" 
+                        class="chat-input" 
+                        placeholder="Describe your symptoms in detail..."
+                        rows="3"
+                    ></textarea>
+                    <button class="send-btn" id="sendBtn">
+                        <span class="send-icon">➤</span>
+                        <span class="send-text">Analyze</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Emergency Warning (Hidden by default) -->
+            <div class="emergency-alert" id="emergencyAlert" style="display: none;">
+                <div class="alert-icon">🚨</div>
+                <div class="alert-content">
+                    <h3>Seek Immediate Medical Attention</h3>
+                    <p>Your symptoms may require urgent medical care. Please visit the nearest hospital or call emergency services immediately.</p>
+                    <button class="alert-close" onclick="this.parentElement.parentElement.style.display='none'">✕</button>
+                </div>
+            </div>
+
+            <!-- Safety Disclaimer -->
+            <div class="safety-disclaimer">
+                <p>⚠️ This is an AI-powered wellness assistant for educational purposes. Always consult certified AYUSH practitioners for personalized treatment. <a href="#" class="find-practitioner">Find Certified Practitioner →</a></p>
+            </div>
+
+            <!-- About Section -->
+            <section class="about-section" id="aboutSection">
+                <div class="about-header">
+                    <h2 class="about-title">About AYUSH AI</h2>
+                    <p class="about-subtitle">Bridging ancient wisdom with modern technology for holistic wellness</p>
+                </div>
+
+                <!-- What is AYUSH -->
+                <div class="about-card featured">
+                    <div class="card-icon">🕉️</div>
+                    <h3>What is AYUSH?</h3>
+                    <p>AYUSH is an acronym for the traditional and non-conventional systems of medicine practiced in India. It represents a holistic approach to health and wellness that has been refined over thousands of years.</p>
+                </div>
+
+                <!-- AYUSH Systems Grid -->
+                <div class="ayush-systems-grid">
+                    <div class="system-card">
+                        <div class="system-icon">🌱</div>
+                        <h3>Ayurveda</h3>
+                        <p class="system-origin">Origin: 5000+ years old, India</p>
+                        <p class="system-desc">The "Science of Life" focuses on balancing the three doshas (Vata, Pitta, Kapha) through herbs, diet, and lifestyle modifications.</p>
+                        <ul class="system-benefits">
+                            <li>Herbal remedies and natural medicines</li>
+                            <li>Personalized diet recommendations</li>
+                            <li>Detoxification therapies (Panchakarma)</li>
+                            <li>Holistic lifestyle guidance</li>
+                        </ul>
+                    </div>
+
+                    <div class="system-card">
+                        <div class="system-icon">🧘</div>
+                        <h3>Yoga</h3>
+                        <p class="system-origin">Origin: Ancient India, 3000+ BCE</p>
+                        <p class="system-desc">A mind-body practice combining physical postures, breathing techniques, and meditation for overall wellness.</p>
+                        <ul class="system-benefits">
+                            <li>Asanas (physical postures)</li>
+                            <li>Pranayama (breathing exercises)</li>
+                            <li>Meditation and mindfulness</li>
+                            <li>Stress reduction and mental clarity</li>
+                        </ul>
+                    </div>
+
+                    <div class="system-card">
+                        <div class="system-icon">🌿</div>
+                        <h3>Unani</h3>
+                        <p class="system-origin">Origin: Greece, refined in Persia & India</p>
+                        <p class="system-desc">Greco-Arabic medicine based on the theory of four humors, using natural healing methods and herbal formulations.</p>
+                        <ul class="system-benefits">
+                            <li>Herbal medicines and compounds</li>
+                            <li>Dietary therapy (Ilaj-bil-Ghiza)</li>
+                            <li>Regimental therapy</li>
+                            <li>Preventive healthcare</li>
+                        </ul>
+                    </div>
+
+                    <div class="system-card">
+                        <div class="system-icon">💊</div>
+                        <h3>Siddha</h3>
+                        <p class="system-origin">Origin: South India, Tamil Nadu</p>
+                        <p class="system-desc">Ancient Tamil system using minerals, metals, and herbal compounds for treating chronic diseases.</p>
+                        <ul class="system-benefits">
+                            <li>Herbo-mineral preparations</li>
+                            <li>Rejuvenation therapies</li>
+                            <li>Detoxification methods</li>
+                            <li>Chronic disease management</li>
+                        </ul>
+                    </div>
+
+                    <div class="system-card">
+                        <div class="system-icon">⚗️</div>
+                        <h3>Homeopathy</h3>
+                        <p class="system-origin">Origin: Germany, 18th century</p>
+                        <p class="system-desc">System based on "like cures like" principle, using highly diluted substances to stimulate the body's healing response.</p>
+                        <ul class="system-benefits">
+                            <li>Individualized treatment</li>
+                            <li>Minimal side effects</li>
+                            <li>Holistic approach</li>
+                            <li>Safe for all ages</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- How It Works -->
+                <div class="how-it-works">
+                    <h2 class="section-heading">How AYUSH AI Works</h2>
+                    <div class="steps-grid">
+                        <div class="step-card">
+                            <div class="step-number">1</div>
+                            <h4>Describe Symptoms</h4>
+                            <p>Share your health concerns and symptoms in detail. Our AI understands both English and Hindi.</p>
                         </div>
-                        <p id="explanation" class="explanation"></p>
-                    </div>
-
-                    <!-- Recommendations -->
-                    <div class="recommendations">
-                        <h3 class="section-title">Recommended Treatments</h3>
-                        <div id="recommendationsList" class="recommendations-list"></div>
-                    </div>
-
-                    <!-- Safety Warnings -->
-                    <div id="safetyWarnings" class="safety-warnings">
-                        <h3 class="warning-title">⚠️ Important Safety Information</h3>
-                        <ul id="warningsList" class="warnings-list"></ul>
-                    </div>
-
-                    <!-- Disclaimer -->
-                    <div class="disclaimer">
-                        <p id="disclaimerText"></p>
+                        <div class="step-card">
+                            <div class="step-number">2</div>
+                            <h4>AI Analysis</h4>
+                            <p>Our intelligent system analyzes your symptoms against a comprehensive AYUSH knowledge base.</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-number">3</div>
+                            <h4>Get Recommendations</h4>
+                            <p>Receive personalized treatment suggestions from traditional AYUSH practices with detailed explanations.</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-number">4</div>
+                            <h4>Consult Practitioner</h4>
+                            <p>Use our recommendations as a starting point and consult certified AYUSH practitioners for treatment.</p>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Error Message -->
-                <div id="errorMessage" class="error-message" style="display: none;"></div>
+                <!-- Key Features -->
+                <div class="features-section">
+                    <h2 class="section-heading">Key Features</h2>
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">🤖</div>
+                            <h4>AI-Powered Intelligence</h4>
+                            <p>Advanced AI trained on traditional AYUSH knowledge and modern medical understanding</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">🌐</div>
+                            <h4>Bilingual Support</h4>
+                            <p>Available in English and Hindi to serve diverse communities</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">💡</div>
+                            <h4>Explainable AI</h4>
+                            <p>Understand why each remedy is recommended with detailed explanations</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">🛡️</div>
+                            <h4>Safety First</h4>
+                            <p>Emergency detection, safety warnings, and clear medical disclaimers</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">📚</div>
+                            <h4>Comprehensive Database</h4>
+                            <p>Extensive collection of traditional remedies and modern research</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">📱</div>
+                            <h4>Accessible Anywhere</h4>
+                            <p>Works on all devices - desktop, tablet, and mobile</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Benefits -->
+                <div class="benefits-section">
+                    <h2 class="section-heading">Why Choose AYUSH AI?</h2>
+                    <div class="benefits-list">
+                        <div class="benefit-item">
+                            <span class="benefit-icon">✓</span>
+                            <div>
+                                <h4>Holistic Approach</h4>
+                                <p>Treats the root cause, not just symptoms, for long-term wellness</p>
+                            </div>
+                        </div>
+                        <div class="benefit-item">
+                            <span class="benefit-icon">✓</span>
+                            <div>
+                                <h4>Natural & Safe</h4>
+                                <p>Recommendations based on natural herbs and practices with minimal side effects</p>
+                            </div>
+                        </div>
+                        <div class="benefit-item">
+                            <span class="benefit-icon">✓</span>
+                            <div>
+                                <h4>Time-Tested Wisdom</h4>
+                                <p>Thousands of years of traditional knowledge validated by modern research</p>
+                            </div>
+                        </div>
+                        <div class="benefit-item">
+                            <span class="benefit-icon">✓</span>
+                            <div>
+                                <h4>Personalized Care</h4>
+                                <p>Recommendations tailored to your specific symptoms and constitution</p>
+                            </div>
+                        </div>
+                        <div class="benefit-item">
+                            <span class="benefit-icon">✓</span>
+                            <div>
+                                <h4>Preventive Healthcare</h4>
+                                <p>Focus on prevention and maintaining balance for optimal health</p>
+                            </div>
+                        </div>
+                        <div class="benefit-item">
+                            <span class="benefit-icon">✓</span>
+                            <div>
+                                <h4>Complementary Medicine</h4>
+                                <p>Can be used alongside conventional treatments for comprehensive care</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Disclaimer -->
+                <div class="about-disclaimer">
+                    <h3>Important Notice</h3>
+                    <p>AYUSH AI is an educational tool designed to provide information about traditional wellness practices. It is not a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of qualified healthcare providers with any questions you may have regarding a medical condition. In case of emergency, contact your local emergency services immediately.</p>
+                    <p class="disclaimer-footer">Developed in accordance with Ministry of AYUSH guidelines, Government of India.</p>
+                </div>
+            </section>
+        </main>
+
+        <!-- Toggle History Button (Mobile) -->
+        <button class="history-toggle-btn" id="historyToggleBtn">
+            📋 History
+        </button>
+    </div>
+
+    <!-- Dosha Assessment Modal -->
+    <div class="modal" id="doshaModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🕉️ Quick Dosha Assessment</h2>
+                <button class="modal-close" onclick="closeDoshaModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="dosha-question">
+                    <p>Do you feel cold easily?</p>
+                    <div class="dosha-options">
+                        <button class="dosha-option" data-dosha="vata">Yes, often</button>
+                        <button class="dosha-option" data-dosha="pitta">Sometimes</button>
+                        <button class="dosha-option" data-dosha="kapha">Rarely</button>
+                    </div>
+                </div>
+                <div class="dosha-result" id="doshaResult" style="display: none;">
+                    <h3>Your Dominant Dosha: <span id="doshaType"></span></h3>
+                    <p id="doshaDescription"></p>
+                </div>
             </div>
         </div>
-    </section>
-
-    <!-- About Section -->
-    <section id="about" class="about-section">
-        <div class="container">
-            <h2 class="section-heading">About AYUSH Systems</h2>
-            <div class="about-grid">
-                <div class="about-card">
-                    <div class="about-icon">🌱</div>
-                    <h3>Ayurveda</h3>
-                    <p>Ancient Indian system using herbs, diet, and lifestyle for holistic healing</p>
-                </div>
-                <div class="about-card">
-                    <div class="about-icon">🧘</div>
-                    <h3>Yoga</h3>
-                    <p>Physical postures, breathing exercises, and meditation for mind-body wellness</p>
-                </div>
-                <div class="about-card">
-                    <div class="about-icon">🌿</div>
-                    <h3>Unani</h3>
-                    <p>Greco-Arabic medicine focusing on natural healing and balance</p>
-                </div>
-                <div class="about-card">
-                    <div class="about-icon">💊</div>
-                    <h3>Siddha</h3>
-                    <p>South Indian traditional medicine using minerals and herbal compounds</p>
-                </div>
-                <div class="about-card">
-                    <div class="about-icon">⚗️</div>
-                    <h3>Homeopathy</h3>
-                    <p>System using highly diluted substances to trigger body's healing response</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- History Section -->
-    <section id="history" class="history-section" style="display: none;">
-        <div class="container">
-            <h2 class="section-heading">Your Consultation History</h2>
-            <div id="historyList" class="history-list"></div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2024 AYUSH AI Assistant. For educational purposes only. Not a substitute for professional medical advice.</p>
-        </div>
-    </footer>
+    </div>
 
     <script src="js/config.js"></script>
     <script src="js/auth.js"></script>
-    <script src="js/app.js"></script>
-    <script>
-        // Initialize auth UI
-        document.addEventListener('DOMContentLoaded', () => {
-            authManager.updateUI();
-            
-            // Setup user menu if logged in
-            if (authManager.isLoggedIn()) {
-                const userMenuBtn = document.getElementById('userMenuBtn');
-                const userDropdown = document.getElementById('userDropdown');
-                const logoutBtn = document.getElementById('logoutBtn');
-                
-                if (userMenuBtn) {
-                    userMenuBtn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        userDropdown.classList.toggle('show');
-                    });
-                }
-                
-                if (logoutBtn) {
-                    logoutBtn.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        authManager.logout();
-                    });
-                }
-                
-                document.addEventListener('click', () => {
-                    if (userDropdown) userDropdown.classList.remove('show');
-                });
-            }
-        });
-    </script>
+    <script src="js/main.js"></script>
 </body>
 </html>
