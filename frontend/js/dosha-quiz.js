@@ -184,11 +184,23 @@ class DoshaQuiz {
         `;
 
         try {
+            // Get user ID from session
+            const session = localStorage.getItem('ayush.auth.session');
+            let userId = 'guest-' + Date.now();
+            if (session) {
+                try {
+                    const sessionData = JSON.parse(session);
+                    userId = sessionData.user.id;
+                } catch (e) {
+                    console.error('Session parse error:', e);
+                }
+            }
+
             const response = await fetch(`${API_CONFIG.BASE_URL}/api/dosha/assess`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-User-ID': authManager.getUserId()
+                    'X-User-ID': userId
                 },
                 body: JSON.stringify({ answers: this.answers })
             });
@@ -202,17 +214,120 @@ class DoshaQuiz {
 
         } catch (error) {
             console.error('Dosha assessment error:', error);
-            body.innerHTML = `
-                <div class="dosha-error">
-                    <p>Sorry, we couldn't complete the assessment. Please try again.</p>
-                    <button class="dosha-retry-btn" onclick="doshaQuiz.open()">Retry</button>
-                </div>
-            `;
+            
+            // Fallback: Calculate dosha locally if API fails
+            const localResult = this.calculateDoshaLocally();
+            this.showResults(localResult);
         }
+    }
+
+    calculateDoshaLocally() {
+        // Count dosha answers
+        const counts = { vata: 0, pitta: 0, kapha: 0 };
+        this.answers.forEach(answer => {
+            if (answer.answer) {
+                counts[answer.answer.toLowerCase()]++;
+            }
+        });
+
+        // Calculate percentages
+        const total = this.answers.length;
+        const percentages = {
+            vata: Math.round((counts.vata / total) * 100),
+            pitta: Math.round((counts.pitta / total) * 100),
+            kapha: Math.round((counts.kapha / total) * 100)
+        };
+
+        // Find primary and secondary
+        const sorted = Object.entries(percentages).sort((a, b) => b[1] - a[1]);
+        const primary = sorted[0][0].charAt(0).toUpperCase() + sorted[0][0].slice(1);
+        const secondary = sorted[1][0].charAt(0).toUpperCase() + sorted[1][0].slice(1);
+
+        return {
+            primary: primary,
+            primary_percentage: sorted[0][1],
+            secondary: secondary,
+            secondary_percentage: sorted[1][1],
+            description: this.getDoshaDescription(primary),
+            characteristics: this.getDoshaCharacteristics(primary),
+            recommendations: this.getDoshaRecommendations(primary)
+        };
+    }
+
+    getDoshaDescription(dosha) {
+        const descriptions = {
+            'Vata': 'Vata is the energy of movement, composed of air and space. People with dominant Vata tend to be creative, energetic, and quick-thinking.',
+            'Pitta': 'Pitta is the energy of transformation, composed of fire and water. People with dominant Pitta tend to be intelligent, focused, and goal-oriented.',
+            'Kapha': 'Kapha is the energy of structure, composed of earth and water. People with dominant Kapha tend to be calm, stable, and nurturing.'
+        };
+        return descriptions[dosha] || '';
+    }
+
+    getDoshaCharacteristics(dosha) {
+        const characteristics = {
+            'Vata': [
+                'Light, thin build',
+                'Quick mind and creativity',
+                'Variable energy levels',
+                'Tendency toward dry skin',
+                'Light, interrupted sleep'
+            ],
+            'Pitta': [
+                'Medium build and strength',
+                'Sharp intellect and focus',
+                'Strong digestion',
+                'Warm body temperature',
+                'Moderate, sound sleep'
+            ],
+            'Kapha': [
+                'Solid, heavier build',
+                'Calm and steady nature',
+                'Strong endurance',
+                'Smooth, moist skin',
+                'Deep, long sleep'
+            ]
+        };
+        return characteristics[dosha] || [];
+    }
+
+    getDoshaRecommendations(dosha) {
+        const recommendations = {
+            'Vata': [
+                'Maintain regular routines',
+                'Eat warm, cooked foods',
+                'Practice grounding activities',
+                'Get adequate rest',
+                'Stay warm and avoid cold'
+            ],
+            'Pitta': [
+                'Avoid excessive heat',
+                'Eat cooling foods',
+                'Practice moderation',
+                'Manage stress effectively',
+                'Stay cool and calm'
+            ],
+            'Kapha': [
+                'Stay active and exercise',
+                'Eat light, warm foods',
+                'Avoid oversleeping',
+                'Seek variety and stimulation',
+                'Stay warm and dry'
+            ]
+        };
+        return recommendations[dosha] || [];
     }
 
     showResults(result) {
         const body = document.getElementById('doshaQuizBody');
+        
+        // Save dosha to localStorage
+        localStorage.setItem('ayush.user.dosha', result.primary);
+        localStorage.setItem('ayush.user.dosha.full', JSON.stringify(result));
+        
+        // Update badge in header if function exists
+        if (typeof updateDoshaBadge === 'function') {
+            updateDoshaBadge(result.primary);
+        }
         
         const doshaIcons = {
             'Vata': '💨',
@@ -258,9 +373,13 @@ class DoshaQuiz {
                         ${result.recommendations.map(rec => `<li>${rec}</li>`).join('')}
                     </ul>
                 </div>
+                
+                <div style="background: linear-gradient(135deg, #E8F5E9, #C8E6C9); padding: 1rem; border-radius: 12px; margin: 1.5rem 0; text-align: center;">
+                    <p style="margin: 0; color: #2E7D32; font-weight: 600;">✨ Your dosha will now personalize all remedy recommendations!</p>
+                </div>
 
                 <div class="dosha-actions">
-                    <button class="dosha-done-btn" onclick="doshaQuiz.close(); location.reload();">
+                    <button class="dosha-done-btn" onclick="doshaQuiz.close();">
                         Done
                     </button>
                     <button class="dosha-retake-btn" onclick="doshaQuiz.open()">

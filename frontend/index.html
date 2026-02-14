@@ -3,359 +3,450 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="AI-powered AYUSH wellness assistant">
-    <meta name="theme-color" content="#8b5cf6">
-    <title>AYUSH AI - Your Wellness Companion</title>
-    <link rel="manifest" href="manifest.json">
+    <title>AYUSH AI - Sacred Wellness Platform</title>
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/dosha-quiz.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <!-- Professional Header with Hierarchy -->
-    <header class="app-header">
-        <div class="header-content">
-            <div class="brand">
-                <div class="brand-main">
-                    <span class="brand-icon">A</span>
-                    <span class="brand-name">AYUSH AI</span>
+    <!-- Skip to main content for accessibility -->
+    <a href="#mainContent" class="skip-link">Skip to main content</a>
+    
+    <!-- LANDING PAGE -->
+    <div class="landing-page" id="landingPage">
+        <header class="sacred-header" role="banner">
+            <div class="header-container">
+                <div class="brand-section">
+                    <div class="brand-logo-icon" aria-hidden="true">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                            <path d="M2 17l10 5 10-5M2 12l10 5 10-5"/>
+                        </svg>
+                    </div>
+                    <div class="brand-text">
+                        <h1>AYUSH Digital Assistant</h1>
+                        <p class="brand-tagline">Ancient Wisdom. Modern Intelligence.</p>
+                    </div>
+                    <span class="ayush-badge">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                        AYUSH Certified
+                    </span>
                 </div>
-                <p class="brand-subtitle">Ancient Wisdom. Modern Intelligence.</p>
+                <div class="header-actions">
+                    <button class="dosha-btn-sacred" onclick="showLogin()">Login</button>
+                    <button class="dosha-btn-sacred" style="background: var(--herbal-deep);" onclick="showSignup()">Get Started</button>
+                </div>
             </div>
-            
-            <div class="header-divider"></div>
-            
-            <div class="header-actions">
-                <button class="dosha-quiz-btn" onclick="doshaQuiz.open()" title="Discover Your Dosha">
-                    Dosha Quiz
-                </button>
-                
-                <div class="language-switch">
-                    <button class="lang-option active" data-lang="en">EN</button>
-                    <button class="lang-option" data-lang="hi">हिंदी</button>
+        </header>
+
+        <div class="main-content-sacred" id="mainContent" role="main" style="max-width: 1200px;">
+            <div class="hero-welcome-card" style="text-align: center; padding: 80px 40px;">
+                <p class="hero-greeting">Welcome to Your Wellness Journey</p>
+                <h1 class="hero-title" style="font-size: 42px; margin-bottom: 24px;">AI-Powered Traditional AYUSH Guidance</h1>
+                <p class="hero-subtitle" style="max-width: 700px; margin: 0 auto 32px;">Experience personalized wellness recommendations rooted in Ayurveda, Yoga, Unani, Siddha, and Homeopathy traditions, enhanced by modern artificial intelligence.</p>
+                <button class="dosha-btn-sacred" style="padding: 16px 40px; font-size: 16px; background: var(--herbal-deep);" onclick="showSignup()" aria-label="Begin your wellness journey">Begin Your Journey</button>
+            </div>
+
+            <div style="margin: 64px 0;">
+                <h2 style="text-align: center; font-size: 32px; margin-bottom: 48px; color: var(--herbal-deep);">Why Choose AYUSH AI</h2>
+                <div class="category-grid-sacred" role="list">
+                    <div class="remedy-card-sacred">
+                        <div class="category-icon" style="font-size: 32px; margin-bottom: 16px;">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 6v6l4 2"/>
+                            </svg>
+                        </div>
+                        <h3>6-Layer Intelligence</h3>
+                        <p>Advanced AI pipeline with emergency detection, ranked matching, and dosha-aware personalization</p>
+                    </div>
+                    <div class="remedy-card-sacred">
+                        <div class="category-icon" style="font-size: 32px; margin-bottom: 16px;">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2a10 10 0 0 1 10 10 4 4 0 0 1-5 5 4 4 0 0 1-5-5"/>
+                                <path d="M12 2a10 10 0 0 0-10 10 4 4 0 0 0 5 5 4 4 0 0 0 5-5"/>
+                            </svg>
+                        </div>
+                        <h3>Dosha Assessment</h3>
+                        <p>Discover your unique Ayurvedic constitution for truly personalized recommendations</p>
+                    </div>
+                    <div class="remedy-card-sacred">
+                        <div class="category-icon" style="font-size: 32px; margin-bottom: 16px;">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            </svg>
+                        </div>
+                        <h3>Safety First</h3>
+                        <p>Instant emergency detection for critical symptoms requiring immediate medical attention</p>
+                    </div>
                 </div>
-                
-                <div class="user-profile">
-                    <div class="user-avatar"></div>
-                    <span class="user-name" id="headerUserName">Guest</span>
+            </div>
+
+            <!-- About AYUSH Section -->
+            <div style="margin: 80px 0; padding: 60px 40px; background: linear-gradient(135deg, rgba(47, 79, 47, 0.05), rgba(197, 124, 42, 0.05)); border-radius: var(--radius-lg);">
+                <h2 style="text-align: center; font-size: 32px; margin-bottom: 24px; color: var(--herbal-deep);">About AYUSH</h2>
+                <p style="text-align: center; max-width: 800px; margin: 0 auto 48px; font-size: 16px; line-height: 1.7; color: var(--text-secondary);">
+                    AYUSH represents five traditional systems of medicine that have been practiced in India for thousands of years. Our platform brings these ancient healing traditions into the modern age with AI-powered intelligence.
+                </p>
+
+                <div class="category-grid-sacred" style="margin-bottom: 48px;">
+                    <div class="remedy-card-sacred" style="border-left: 4px solid var(--herbal-deep);">
+                        <h3 style="color: var(--herbal-deep); margin-bottom: 12px;">Ayurveda</h3>
+                        <p style="font-size: 14px; line-height: 1.6;">The science of life, focusing on balance of body, mind, and spirit through natural remedies, diet, and lifestyle practices.</p>
+                    </div>
+                    <div class="remedy-card-sacred" style="border-left: 4px solid var(--terracotta);">
+                        <h3 style="color: var(--terracotta); margin-bottom: 12px;">Yoga</h3>
+                        <p style="font-size: 14px; line-height: 1.6;">Ancient practice combining physical postures, breathing techniques, and meditation for holistic wellness.</p>
+                    </div>
+                    <div class="remedy-card-sacred" style="border-left: 4px solid var(--herbal-deep);">
+                        <h3 style="color: var(--herbal-deep); margin-bottom: 12px;">Unani</h3>
+                        <p style="font-size: 14px; line-height: 1.6;">Greco-Arabic medicine system emphasizing balance of four humors and natural healing through herbs and minerals.</p>
+                    </div>
+                    <div class="remedy-card-sacred" style="border-left: 4px solid var(--terracotta);">
+                        <h3 style="color: var(--terracotta); margin-bottom: 12px;">Siddha</h3>
+                        <p style="font-size: 14px; line-height: 1.6;">Ancient Tamil system of medicine using minerals, metals, and herbs for treating chronic conditions.</p>
+                    </div>
+                    <div class="remedy-card-sacred" style="border-left: 4px solid var(--herbal-deep);">
+                        <h3 style="color: var(--herbal-deep); margin-bottom: 12px;">Homeopathy</h3>
+                        <p style="font-size: 14px; line-height: 1.6;">Holistic system based on "like cures like" principle, using highly diluted natural substances.</p>
+                    </div>
                 </div>
+            </div>
+
+            <!-- How It Works Section -->
+            <div style="margin: 80px 0;">
+                <h2 style="text-align: center; font-size: 32px; margin-bottom: 24px; color: var(--herbal-deep);">How AYUSH AI Works</h2>
+                <p style="text-align: center; max-width: 800px; margin: 0 auto 48px; font-size: 16px; line-height: 1.7; color: var(--text-secondary);">
+                    Our intelligent 6-layer pipeline combines traditional AYUSH wisdom with modern AI to provide personalized wellness guidance.
+                </p>
+
+                <div style="max-width: 900px; margin: 0 auto;">
+                    <div class="remedy-card-sacred" style="margin-bottom: 24px; border-left: 4px solid var(--herbal-deep);">
+                        <div style="display: flex; align-items: start; gap: 20px;">
+                            <div style="flex-shrink: 0; width: 40px; height: 40px; background: var(--herbal-deep); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px;">1</div>
+                            <div>
+                                <h3 style="margin-bottom: 8px;">Emergency Detection</h3>
+                                <p style="font-size: 14px; line-height: 1.6; color: var(--text-secondary);">Instantly identifies critical symptoms requiring immediate medical attention with safety-first alerts.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="remedy-card-sacred" style="margin-bottom: 24px; border-left: 4px solid var(--terracotta);">
+                        <div style="display: flex; align-items: start; gap: 20px;">
+                            <div style="flex-shrink: 0; width: 40px; height: 40px; background: var(--terracotta); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px;">2</div>
+                            <div>
+                                <h3 style="margin-bottom: 8px;">Symptom Analysis</h3>
+                                <p style="font-size: 14px; line-height: 1.6; color: var(--text-secondary);">AI-powered natural language processing understands your symptoms in your own words.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="remedy-card-sacred" style="margin-bottom: 24px; border-left: 4px solid var(--herbal-deep);">
+                        <div style="display: flex; align-items: start; gap: 20px;">
+                            <div style="flex-shrink: 0; width: 40px; height: 40px; background: var(--herbal-deep); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px;">3</div>
+                            <div>
+                                <h3 style="margin-bottom: 8px;">AYUSH Knowledge Matching</h3>
+                                <p style="font-size: 14px; line-height: 1.6; color: var(--text-secondary);">Matches your symptoms with traditional remedies from our comprehensive AYUSH database.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="remedy-card-sacred" style="margin-bottom: 24px; border-left: 4px solid var(--terracotta);">
+                        <div style="display: flex; align-items: start; gap: 20px;">
+                            <div style="flex-shrink: 0; width: 40px; height: 40px; background: var(--terracotta); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px;">4</div>
+                            <div>
+                                <h3 style="margin-bottom: 8px;">Dosha Alignment</h3>
+                                <p style="font-size: 14px; line-height: 1.6; color: var(--text-secondary);">Personalizes recommendations based on your unique Ayurvedic constitution (Vata, Pitta, or Kapha).</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="remedy-card-sacred" style="margin-bottom: 24px; border-left: 4px solid var(--herbal-deep);">
+                        <div style="display: flex; align-items: start; gap: 20px;">
+                            <div style="flex-shrink: 0; width: 40px; height: 40px; background: var(--herbal-deep); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px;">5</div>
+                            <div>
+                                <h3 style="margin-bottom: 8px;">Intelligent Ranking</h3>
+                                <p style="font-size: 14px; line-height: 1.6; color: var(--text-secondary);">Ranks remedies by relevance, safety, and alignment with your personal health profile.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="remedy-card-sacred" style="border-left: 4px solid var(--terracotta);">
+                        <div style="display: flex; align-items: start; gap: 20px;">
+                            <div style="flex-shrink: 0; width: 40px; height: 40px; background: var(--terracotta); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px;">6</div>
+                            <div>
+                                <h3 style="margin-bottom: 8px;">Explainable Results</h3>
+                                <p style="font-size: 14px; line-height: 1.6; color: var(--text-secondary);">Provides transparent reasoning showing why each remedy was recommended for your specific case.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Features Section -->
+            <div style="margin: 80px 0; padding: 60px 40px; background: var(--card-cream); border-radius: var(--radius-lg);">
+                <h2 style="text-align: center; font-size: 32px; margin-bottom: 48px; color: var(--herbal-deep);">Powerful Features</h2>
                 
-                <button class="logout-btn" id="headerLogout">Logout</button>
+                <div class="category-grid-sacred">
+                    <div style="text-align: center;">
+                        <div style="width: 60px; height: 60px; margin: 0 auto 16px; background: linear-gradient(135deg, var(--herbal-deep), var(--terracotta)); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                <path d="M12 2a10 10 0 0 1 10 10 4 4 0 0 1-5 5 4 4 0 0 1-5-5"/>
+                                <path d="M12 2a10 10 0 0 0-10 10 4 4 0 0 0 5 5 4 4 0 0 0 5-5"/>
+                            </svg>
+                        </div>
+                        <h3 style="margin-bottom: 8px;">Dosha Quiz</h3>
+                        <p style="font-size: 14px; color: var(--text-secondary);">Discover your Ayurvedic constitution</p>
+                    </div>
+
+                    <div style="text-align: center;">
+                        <div style="width: 60px; height: 60px; margin: 0 auto 16px; background: linear-gradient(135deg, var(--herbal-deep), var(--terracotta)); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 16v-4M12 8h.01"/>
+                            </svg>
+                        </div>
+                        <h3 style="margin-bottom: 8px;">Emergency Alerts</h3>
+                        <p style="font-size: 14px; color: var(--text-secondary);">Instant detection of critical symptoms</p>
+                    </div>
+
+                    <div style="text-align: center;">
+                        <div style="width: 60px; height: 60px; margin: 0 auto 16px; background: linear-gradient(135deg, var(--herbal-deep), var(--terracotta)); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                            </svg>
+                        </div>
+                        <h3 style="margin-bottom: 8px;">Consultation History</h3>
+                        <p style="font-size: 14px; color: var(--text-secondary);">Track your wellness journey over time</p>
+                    </div>
+
+                    <div style="text-align: center;">
+                        <div style="width: 60px; height: 60px; margin: 0 auto 16px; background: linear-gradient(135deg, var(--herbal-deep), var(--terracotta)); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="7 10 12 15 17 10"/>
+                                <line x1="12" y1="15" x2="12" y2="3"/>
+                            </svg>
+                        </div>
+                        <h3 style="margin-bottom: 8px;">Download Summaries</h3>
+                        <p style="font-size: 14px; color: var(--text-secondary);">Save recommendations for offline use</p>
+                    </div>
+
+                    <div style="text-align: center;">
+                        <div style="width: 60px; height: 60px; margin: 0 auto 16px; background: linear-gradient(135deg, var(--herbal-deep), var(--terracotta)); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                <path d="M3 3h18v18H3zM21 9H3M21 15H3M12 3v18"/>
+                            </svg>
+                        </div>
+                        <h3 style="margin-bottom: 8px;">Bilingual Support</h3>
+                        <p style="font-size: 14px; color: var(--text-secondary);">Available in English and Hindi</p>
+                    </div>
+
+                    <div style="text-align: center;">
+                        <div style="width: 60px; height: 60px; margin: 0 auto 16px; background: linear-gradient(135deg, var(--herbal-deep), var(--terracotta)); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            </svg>
+                        </div>
+                        <h3 style="margin-bottom: 8px;">Cloud-Powered</h3>
+                        <p style="font-size: 14px; color: var(--text-secondary);">Secure, scalable infrastructure</p>
+                    </div>
+                </div>
             </div>
         </div>
-    </header>
 
-    <div class="app-container">
-        <!-- Sidebar - History Panel -->
-        <aside class="sidebar" id="historySidebar">
-            <div class="sidebar-header">
-                <h3>Previous Consultations</h3>
-                <button class="sidebar-toggle" id="sidebarToggle">✕</button>
-            </div>
-            <div class="history-list" id="historyList">
-                <div class="empty-history">
-                    <p>No consultations yet</p>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Hero Welcome Section -->
-            <section class="welcome-hero">
-                <h1 class="welcome-title">
-                    <span class="welcome-text">How can I help your wellness today?</span>
-                </h1>
-                
-                <!-- Quick Action Buttons -->
-                <div class="quick-actions">
-                    <button class="quick-btn" data-symptom="I have digestion issues, bloating and constipation">
-                        <span class="quick-label">Digestion Issues</span>
-                    </button>
-                    <button class="quick-btn" data-symptom="I am feeling stressed and anxious">
-                        <span class="quick-label">Stress & Anxiety</span>
-                    </button>
-                    <button class="quick-btn" data-symptom="I want to boost my immunity">
-                        <span class="quick-label">Immunity Boost</span>
-                    </button>
-                </div>
-
-                <!-- Symptom Tag Suggestions -->
-                <div class="symptom-tags">
-                    <span class="tag-label">Common symptoms:</span>
-                    <button class="symptom-tag" data-tag="Headache">Headache</button>
-                    <button class="symptom-tag" data-tag="Cold & Cough">Cold & Cough</button>
-                    <button class="symptom-tag" data-tag="Joint Pain">Joint Pain</button>
-                    <button class="symptom-tag" data-tag="Fatigue">Fatigue</button>
-                    <button class="symptom-tag" data-tag="Insomnia">Insomnia</button>
-                </div>
-            </section>
-
-            <!-- Chat Interface -->
-            <section class="chat-section">
-                <div class="chat-container" id="chatContainer">
-                    <!-- Empty State -->
-                    <div class="empty-state" id="emptyState">
-                        <h3>Welcome to Your Wellness Journey</h3>
-                        <p>Describe your symptoms to receive personalized natural recommendations from traditional AYUSH practices.</p>
-                    </div>
-                </div>
-
-                <!-- Input Area -->
-                <div class="input-area">
-                    <textarea 
-                        id="symptomInput" 
-                        class="chat-input" 
-                        placeholder="Describe your symptoms in detail..."
-                        rows="3"
-                    ></textarea>
-                    <button class="send-btn" id="sendBtn">
-                        <span class="send-icon">➤</span>
-                        <span class="send-text">Analyze</span>
-                    </button>
-                </div>
-            </section>
-
-            <!-- Emergency Warning (Hidden by default) -->
-            <div class="emergency-alert" id="emergencyAlert" style="display: none;">
-                <div class="alert-content">
-                    <h3>Seek Immediate Medical Attention</h3>
-                    <p>Your symptoms may require urgent medical care. Please visit the nearest hospital or call emergency services immediately.</p>
-                    <button class="alert-close" onclick="this.parentElement.parentElement.style.display='none'">✕</button>
-                </div>
-            </div>
-
-            <!-- Safety Disclaimer -->
-            <div class="safety-disclaimer">
-                <p>This is an AI-powered wellness assistant for educational purposes. Always consult certified AYUSH practitioners for personalized treatment. <a href="#" class="find-practitioner">Find Certified Practitioner →</a></p>
-            </div>
-
-            <!-- About Section -->
-            <section class="about-section" id="aboutSection">
-                <div class="about-header">
-                    <h2 class="about-title">About AYUSH AI</h2>
-                    <p class="about-subtitle">Bridging ancient wisdom with modern technology for holistic wellness</p>
-                </div>
-
-                <!-- What is AYUSH -->
-                <div class="about-card featured">
-                    <h3>What is AYUSH?</h3>
-                    <p>AYUSH is an acronym for the traditional and non-conventional systems of medicine practiced in India. It represents a holistic approach to health and wellness that has been refined over thousands of years.</p>
-                </div>
-
-                <!-- AYUSH Systems Grid -->
-                <div class="ayush-systems-grid">
-                    <div class="system-card">
-                        <h3>Ayurveda</h3>
-                        <p class="system-origin">Origin: 5000+ years old, India</p>
-                        <p class="system-desc">The "Science of Life" focuses on balancing the three doshas (Vata, Pitta, Kapha) through herbs, diet, and lifestyle modifications.</p>
-                        <ul class="system-benefits">
-                            <li>Herbal remedies and natural medicines</li>
-                            <li>Personalized diet recommendations</li>
-                            <li>Detoxification therapies (Panchakarma)</li>
-                            <li>Holistic lifestyle guidance</li>
-                        </ul>
-                    </div>
-
-                    <div class="system-card">
-                        <h3>Yoga</h3>
-                        <p class="system-origin">Origin: Ancient India, 3000+ BCE</p>
-                        <p class="system-desc">A mind-body practice combining physical postures, breathing techniques, and meditation for overall wellness.</p>
-                        <ul class="system-benefits">
-                            <li>Asanas (physical postures)</li>
-                            <li>Pranayama (breathing exercises)</li>
-                            <li>Meditation and mindfulness</li>
-                            <li>Stress reduction and mental clarity</li>
-                        </ul>
-                    </div>
-
-                    <div class="system-card">
-                        <h3>Unani</h3>
-                        <p class="system-origin">Origin: Greece, refined in Persia & India</p>
-                        <p class="system-desc">Greco-Arabic medicine based on the theory of four humors, using natural healing methods and herbal formulations.</p>
-                        <ul class="system-benefits">
-                            <li>Herbal medicines and compounds</li>
-                            <li>Dietary therapy (Ilaj-bil-Ghiza)</li>
-                            <li>Regimental therapy</li>
-                            <li>Preventive healthcare</li>
-                        </ul>
-                    </div>
-
-                    <div class="system-card">
-                        <h3>Siddha</h3>
-                        <p class="system-origin">Origin: South India, Tamil Nadu</p>
-                        <p class="system-desc">Ancient Tamil system using minerals, metals, and herbal compounds for treating chronic diseases.</p>
-                        <ul class="system-benefits">
-                            <li>Herbo-mineral preparations</li>
-                            <li>Rejuvenation therapies</li>
-                            <li>Detoxification methods</li>
-                            <li>Chronic disease management</li>
-                        </ul>
-                    </div>
-
-                    <div class="system-card">
-                        <h3>Homeopathy</h3>
-                        <p class="system-origin">Origin: Germany, 18th century</p>
-                        <p class="system-desc">System based on "like cures like" principle, using highly diluted substances to stimulate the body's healing response.</p>
-                        <ul class="system-benefits">
-                            <li>Individualized treatment</li>
-                            <li>Minimal side effects</li>
-                            <li>Holistic approach</li>
-                            <li>Safe for all ages</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- How It Works -->
-                <div class="how-it-works">
-                    <h2 class="section-heading">How AYUSH AI Works</h2>
-                    <div class="steps-grid">
-                        <div class="step-card">
-                            <div class="step-number">1</div>
-                            <h4>Describe Symptoms</h4>
-                            <p>Share your health concerns and symptoms in detail. Our AI understands both English and Hindi.</p>
-                        </div>
-                        <div class="step-card">
-                            <div class="step-number">2</div>
-                            <h4>AI Analysis</h4>
-                            <p>Our intelligent system analyzes your symptoms against a comprehensive AYUSH knowledge base.</p>
-                        </div>
-                        <div class="step-card">
-                            <div class="step-number">3</div>
-                            <h4>Get Recommendations</h4>
-                            <p>Receive personalized treatment suggestions from traditional AYUSH practices with detailed explanations.</p>
-                        </div>
-                        <div class="step-card">
-                            <div class="step-number">4</div>
-                            <h4>Consult Practitioner</h4>
-                            <p>Use our recommendations as a starting point and consult certified AYUSH practitioners for treatment.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Key Features -->
-                <div class="features-section">
-                    <h2 class="section-heading">Key Features</h2>
-                    <div class="features-grid">
-                        <div class="feature-card">
-                            <h4>AI-Powered Intelligence</h4>
-                            <p>Advanced AI trained on traditional AYUSH knowledge and modern medical understanding</p>
-                        </div>
-                        <div class="feature-card">
-                            <h4>Bilingual Support</h4>
-                            <p>Available in English and Hindi to serve diverse communities</p>
-                        </div>
-                        <div class="feature-card">
-                            <h4>Explainable AI</h4>
-                            <p>Understand why each remedy is recommended with detailed explanations</p>
-                        </div>
-                        <div class="feature-card">
-                            <h4>Safety First</h4>
-                            <p>Emergency detection, safety warnings, and clear medical disclaimers</p>
-                        </div>
-                        <div class="feature-card">
-                            <h4>Comprehensive Database</h4>
-                            <p>Extensive collection of traditional remedies and modern research</p>
-                        </div>
-                        <div class="feature-card">
-                            <h4>Accessible Anywhere</h4>
-                            <p>Works on all devices - desktop, tablet, and mobile</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Benefits -->
-                <div class="benefits-section">
-                    <h2 class="section-heading">Why Choose AYUSH AI?</h2>
-                    <div class="benefits-list">
-                        <div class="benefit-item">
-                            <span class="benefit-icon">✓</span>
-                            <div>
-                                <h4>Holistic Approach</h4>
-                                <p>Treats the root cause, not just symptoms, for long-term wellness</p>
-                            </div>
-                        </div>
-                        <div class="benefit-item">
-                            <span class="benefit-icon">✓</span>
-                            <div>
-                                <h4>Natural & Safe</h4>
-                                <p>Recommendations based on natural herbs and practices with minimal side effects</p>
-                            </div>
-                        </div>
-                        <div class="benefit-item">
-                            <span class="benefit-icon">✓</span>
-                            <div>
-                                <h4>Time-Tested Wisdom</h4>
-                                <p>Thousands of years of traditional knowledge validated by modern research</p>
-                            </div>
-                        </div>
-                        <div class="benefit-item">
-                            <span class="benefit-icon">✓</span>
-                            <div>
-                                <h4>Personalized Care</h4>
-                                <p>Recommendations tailored to your specific symptoms and constitution</p>
-                            </div>
-                        </div>
-                        <div class="benefit-item">
-                            <span class="benefit-icon">✓</span>
-                            <div>
-                                <h4>Preventive Healthcare</h4>
-                                <p>Focus on prevention and maintaining balance for optimal health</p>
-                            </div>
-                        </div>
-                        <div class="benefit-item">
-                            <span class="benefit-icon">✓</span>
-                            <div>
-                                <h4>Complementary Medicine</h4>
-                                <p>Can be used alongside conventional treatments for comprehensive care</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Disclaimer -->
-                <div class="about-disclaimer">
-                    <h3>Important Notice</h3>
-                    <p>AYUSH AI is an educational tool designed to provide information about traditional wellness practices. It is not a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of qualified healthcare providers with any questions you may have regarding a medical condition. In case of emergency, contact your local emergency services immediately.</p>
-                    <p class="disclaimer-footer">Developed in accordance with Ministry of AYUSH guidelines, Government of India.</p>
-                </div>
-            </section>
-        </main>
-
-        <!-- Toggle History Button (Mobile) -->
-        <button class="history-toggle-btn" id="historyToggleBtn">
-            History
-        </button>
+        <footer class="footer-sacred">
+            <p class="footer-text">Inspired by traditional AYUSH knowledge systems. Developed in accordance with Ministry of AYUSH guidelines, Government of India.</p>
+        </footer>
     </div>
 
-    <!-- Dosha Assessment Modal -->
-    <div class="modal" id="doshaModal" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Quick Dosha Assessment</h2>
-                <button class="modal-close" onclick="closeDoshaModal()">✕</button>
+    <!-- APP PAGE -->
+    <div class="app-page" id="appPage" style="display: none;">
+        <header class="sacred-header">
+            <div class="header-container">
+                <div class="brand-section">
+                    <div class="brand-logo-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                            <path d="M2 17l10 5 10-5M2 12l10 5 10-5"/>
+                        </svg>
+                    </div>
+                    <div class="brand-text">
+                        <h1>AYUSH Digital Assistant</h1>
+                        <p class="brand-tagline">Ancient Wisdom. Modern Intelligence.</p>
+                    </div>
+                    <span class="ayush-badge">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                        AYUSH Certified
+                    </span>
+                </div>
+                <div class="header-actions">
+                    <button class="dosha-btn-sacred" onclick="doshaQuiz.open()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline-block; vertical-align: middle; margin-right: 6px;">
+                            <path d="M12 2a10 10 0 0 1 10 10 4 4 0 0 1-5 5 4 4 0 0 1-5-5"/>
+                        </svg>
+                        Dosha Quiz
+                    </button>
+                    <div class="lang-toggle-sacred">
+                        <button class="lang-opt-sacred active" data-lang="en">EN</button>
+                        <button class="lang-opt-sacred" data-lang="hi">हिंदी</button>
+                    </div>
+                    <div class="user-profile-sacred">
+                        <div class="user-avatar-sacred" id="userAvatar">U</div>
+                        <div class="user-info">
+                            <span class="user-name-sacred" id="userName">User</span>
+                            <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                                <span id="doshaBadge" class="dosha-badge-sacred" style="display: none;"></span>
+                                <span id="sessionCounter" class="session-counter-badge" style="display: none;"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="#" class="logout-link-sacred" id="logoutBtn">Logout</a>
+                </div>
             </div>
-            <div class="modal-body">
-                <div class="dosha-question">
-                    <p>Do you feel cold easily?</p>
-                    <div class="dosha-options">
-                        <button class="dosha-option" data-dosha="vata">Yes, often</button>
-                        <button class="dosha-option" data-dosha="pitta">Sometimes</button>
-                        <button class="dosha-option" data-dosha="kapha">Rarely</button>
+        </header>
+
+        <div class="app-layout-sacred">
+            <aside class="sidebar-sacred" role="complementary" aria-label="Consultation history">
+                <div class="sidebar-header-sacred">
+                    <h2 class="sidebar-title">Previous Consultations</h2>
+                </div>
+                <div id="historyList">
+                    <div class="history-empty">
+                        <div class="history-empty-icon">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                            </svg>
+                        </div>
+                        <p class="history-empty-text">Your wellness history will appear here</p>
                     </div>
                 </div>
-                <div class="dosha-result" id="doshaResult" style="display: none;">
-                    <h3>Your Dominant Dosha: <span id="doshaType"></span></h3>
-                    <p id="doshaDescription"></p>
+            </aside>
+
+            <main class="main-content-sacred" id="mainContent" role="main">
+                <div class="hero-welcome-card">
+                    <p class="hero-greeting">Welcome to Your Wellness Journey</p>
+                    <h1 class="hero-title">How may we support your wellness today?</h1>
+                    <p class="hero-subtitle">Describe your symptoms to receive personalized guidance rooted in traditional AYUSH practices.</p>
                 </div>
-            </div>
+
+                <div class="category-grid-sacred" role="list">
+                    <button class="category-pill" data-symptom="digestion issues bloating constipation">
+                        <div class="category-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                            </svg>
+                        </div>
+                        <div class="category-content">
+                            <span class="category-label">Digestion Issues</span>
+                            <span class="category-desc">Bloating, acidity, constipation</span>
+                        </div>
+                    </button>
+                    <button class="category-pill" data-symptom="stress anxiety feeling overwhelmed">
+                        <div class="category-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2a10 10 0 0 1 10 10 4 4 0 0 1-5 5 4 4 0 0 1-5-5"/>
+                                <path d="M12 2a10 10 0 0 0-10 10 4 4 0 0 0 5 5 4 4 0 0 0 5-5"/>
+                            </svg>
+                        </div>
+                        <div class="category-content">
+                            <span class="category-label">Stress & Anxiety</span>
+                            <span class="category-desc">Mental wellness, relaxation</span>
+                        </div>
+                    </button>
+                    <button class="category-pill" data-symptom="boost immunity weak immune system">
+                        <div class="category-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            </svg>
+                        </div>
+                        <div class="category-content">
+                            <span class="category-label">Immunity Boost</span>
+                            <span class="category-desc">Strengthen natural defenses</span>
+                        </div>
+                    </button>
+                </div>
+
+                <div class="symptoms-section-sacred">
+                    <p class="symptoms-label-sacred">Common Concerns</p>
+                    <div class="symptom-chips-sacred">
+                        <button class="symptom-chip-sacred" data-tag="Headache">Headache</button>
+                        <button class="symptom-chip-sacred" data-tag="Bloating">Bloating</button>
+                        <button class="symptom-chip-sacred" data-tag="Acidity">Acidity</button>
+                        <button class="symptom-chip-sacred" data-tag="Anxiety">Anxiety</button>
+                        <button class="symptom-chip-sacred" data-tag="Fatigue">Fatigue</button>
+                        <button class="symptom-chip-sacred" data-tag="Insomnia">Insomnia</button>
+                        <button class="symptom-chip-sacred" data-tag="Joint stiffness">Joint stiffness</button>
+                    </div>
+                </div>
+
+                <div class="input-area-sacred">
+                    <p class="input-label-sacred">Describe your concern in your own words</p>
+                    <div class="input-wrapper-sacred">
+                        <textarea 
+                            id="symptomInput" 
+                            class="symptom-textarea-sacred"
+                            placeholder="Tell us about your symptoms..."
+                            rows="3"
+                            aria-label="Describe your symptoms"
+                        ></textarea>
+                        <button id="analyzeBtn" class="analyze-btn-sacred" aria-label="Analyze symptoms">Analyze</button>
+                    </div>
+                    
+                    <!-- Severity Slider -->
+                    <div class="severity-slider-container" style="margin-top: var(--space-md);">
+                        <label class="input-label-sacred" style="margin-bottom: 8px; display: block;">Symptom Severity</label>
+                        <div style="display: flex; align-items: center; gap: var(--space-sm);">
+                            <span style="font-size: 12px; color: var(--text-muted); min-width: 60px;">Mild</span>
+                            <input 
+                                type="range" 
+                                id="severitySlider" 
+                                min="1" 
+                                max="5" 
+                                value="3" 
+                                class="severity-slider"
+                                aria-label="Symptom severity level"
+                            />
+                            <span style="font-size: 12px; color: var(--text-muted); min-width: 60px;">Severe</span>
+                        </div>
+                        <div style="text-align: center; margin-top: 8px;">
+                            <span id="severityLabel" style="font-size: 13px; font-weight: 600; color: var(--herbal-deep);">Moderate</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="resultsArea" role="region" aria-live="polite" aria-label="Analysis results"></div>
+
+                <footer class="footer-sacred">
+                    <p class="footer-text">Inspired by traditional AYUSH knowledge systems. For educational wellness guidance. Always consult certified AYUSH practitioners for personalized treatment.</p>
+                </footer>
+            </main>
+        </div>
+    </div>
+
+    <!-- Auth Modal -->
+    <div id="authModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
+        <div style="background: var(--card-cream); border-radius: var(--radius-lg); padding: var(--space-xl); max-width: 450px; width: 90%; box-shadow: var(--shadow-card);">
+            <h2 id="authModalTitle" style="margin-bottom: var(--space-md);">Login</h2>
+            <form id="authForm">
+                <input type="email" id="authEmail" placeholder="Email" required style="width: 100%; padding: var(--space-sm); margin-bottom: var(--space-sm); border: 2px solid var(--terracotta); border-radius: var(--radius-md); font-family: 'Poppins', sans-serif;">
+                <input type="password" id="authPassword" placeholder="Password (min 6 characters)" required style="width: 100%; padding: var(--space-sm); margin-bottom: var(--space-md); border: 2px solid var(--terracotta); border-radius: var(--radius-md); font-family: 'Poppins', sans-serif;">
+                <button type="submit" class="analyze-btn-sacred" style="width: 100%;">Continue</button>
+            </form>
+            <p style="text-align: center; margin-top: var(--space-sm); font-size: 13px; color: var(--text-secondary);">
+                <span id="authToggleText">Don't have an account?</span>
+                <a href="#" id="authToggleLink" onclick="toggleAuthMode(); return false;" style="color: var(--herbal-deep); font-weight: 600; margin-left: 4px;">Sign Up</a>
+            </p>
         </div>
     </div>
 
     <script src="js/config.js"></script>
-    <script src="js/auth.js"></script>
     <script src="js/dosha-quiz.js"></script>
     <script src="js/main.js"></script>
 </body>

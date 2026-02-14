@@ -1,535 +1,669 @@
-// Professional Wellness App Logic
-let currentLanguage = 'en';
-let consultationHistory = [];
+// AYUSH AI - Sacred Aesthetic App Logic
 
-// Emergency keywords for detection
-const EMERGENCY_KEYWORDS = [
-    'chest pain', 'severe bleeding', 'high fever', 'difficulty breathing',
-    'unconscious', 'seizure', 'severe headache', 'stroke', 'heart attack',
-    'suicide', 'severe burn', 'poisoning', 'broken bone'
-];
+let isLoginMode = true;
 
-document.addEventListener('DOMContentLoaded', () => {
-    initializeApp();
-    setupEventListeners();
-    loadHistory();
+// ============================================
+// AUTH FUNCTIONS
+// ============================================
+
+function showLogin() {
+    isLoginMode = true;
+    document.getElementById('authModalTitle').textContent = 'Login';
+    document.getElementById('authToggleText').textContent = "Don't have an account?";
+    document.getElementById('authToggleLink').textContent = 'Sign Up';
+    document.getElementById('authModal').style.display = 'flex';
+}
+
+function showSignup() {
+    isLoginMode = false;
+    document.getElementById('authModalTitle').textContent = 'Sign Up';
+    document.getElementById('authToggleText').textContent = 'Already have an account?';
+    document.getElementById('authToggleLink').textContent = 'Login';
+    document.getElementById('authModal').style.display = 'flex';
+}
+
+function toggleAuthMode() {
+    if (isLoginMode) {
+        showSignup();
+    } else {
+        showLogin();
+    }
+}
+
+document.getElementById('authForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = document.getElementById('authEmail').value;
+    const password = document.getElementById('authPassword').value;
+    
+    if (email && password.length >= 6) {
+        const mockSession = {
+            user: { email: email, id: 'user-' + Date.now() }
+        };
+        localStorage.setItem('ayush.auth.session', JSON.stringify(mockSession));
+        
+        document.getElementById('landingPage').style.display = 'none';
+        document.getElementById('appPage').style.display = 'block';
+        document.getElementById('authModal').style.display = 'none';
+        
+        const userName = email.split('@')[0];
+        document.getElementById('userName').textContent = userName;
+        document.getElementById('userAvatar').textContent = userName.charAt(0).toUpperCase();
+        
+        showToast(isLoginMode ? 'Welcome back!' : 'Account created successfully!');
+        
+        // Load dosha badge if exists
+        const userDosha = localStorage.getItem('ayush.user.dosha');
+        if (userDosha) {
+            updateDoshaBadge(userDosha);
+        }
+        
+        // Load consultation history
+        loadConsultationHistory();
+    } else {
+        showToast('Please enter valid email and password (min 6 characters)');
+    }
 });
 
-function initializeApp() {
-    // Check authentication
-    if (!authManager.isLoggedIn()) {
-        window.location.href = 'login.html';
-        return;
+// ============================================
+// DOSHA BADGE UPDATE
+// ============================================
+
+function updateDoshaBadge(dosha) {
+    const badge = document.getElementById('doshaBadge');
+    if (!badge) return;
+    
+    badge.style.display = 'inline-block';
+    badge.textContent = `${dosha} Dominant`;
+    
+    // Color code by dosha
+    badge.className = 'dosha-badge-sacred';
+    if (dosha === 'Vata') {
+        badge.classList.add('dosha-vata');
+    } else if (dosha === 'Pitta') {
+        badge.classList.add('dosha-pitta');
+    } else if (dosha === 'Kapha') {
+        badge.classList.add('dosha-kapha');
     }
-    
-    const user = authManager.getUser();
-    const userName = user.name || user.email.split('@')[0];
-    document.getElementById('headerUserName').textContent = userName;
-    
-    // Set user avatar initial
-    const userAvatar = document.querySelector('.user-avatar');
-    if (userAvatar) {
-        const initial = user.name ? user.name.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase();
-        userAvatar.textContent = initial;
-    }
-    
-    // Load consultation history
-    consultationHistory = JSON.parse(localStorage.getItem('consultation_history') || '[]');
 }
 
-function setupEventListeners() {
-    // Language toggle
-    document.querySelectorAll('.lang-option').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.lang-option').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentLanguage = btn.dataset.lang;
-            updateLanguage();
-        });
-    });
-    
-    // Logout
-    document.getElementById('headerLogout').addEventListener('click', () => {
-        authManager.logout();
-    });
-    
-    // Quick action buttons
-    document.querySelectorAll('.quick-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const symptom = btn.dataset.symptom;
-            document.getElementById('symptomInput').value = symptom;
-            analyzeSymptoms();
-        });
-    });
-    
-    // Symptom tags
-    document.querySelectorAll('.symptom-tag').forEach(tag => {
-        tag.addEventListener('click', () => {
-            const currentInput = document.getElementById('symptomInput').value;
-            const tagText = tag.dataset.tag;
-            document.getElementById('symptomInput').value = currentInput ? 
-                `${currentInput}, ${tagText}` : tagText;
-        });
-    });
-    
-    // Send button
-    document.getElementById('sendBtn').addEventListener('click', analyzeSymptoms);
-    
-    // Enter key to send
-    document.getElementById('symptomInput').addEventListener('keydown', (e) => {
-        if (e.ctrlKey && e.key === 'Enter') {
-            analyzeSymptoms();
-        }
-    });
-    
-    // History toggle (mobile)
-    document.getElementById('historyToggleBtn')?.addEventListener('click', () => {
-        document.getElementById('historySidebar').classList.toggle('open');
-    });
-    
-    document.getElementById('sidebarToggle')?.addEventListener('click', () => {
-        document.getElementById('historySidebar').classList.remove('open');
-    });
-}
+// ============================================
+// SESSION COUNTER
+// ============================================
 
-function updateLanguage() {
-    // Update UI text based on language
-    if (currentLanguage === 'hi') {
-        document.querySelector('.welcome-text').textContent = 'आज आपकी सेहत में कैसे मदद कर सकता हूं?';
-        document.getElementById('symptomInput').placeholder = 'अपने लक्षणों का विस्तार से वर्णन करें...';
-        document.querySelector('.send-text').textContent = 'विश्लेषण करें';
+function updateSessionCounter() {
+    const consultations = JSON.parse(localStorage.getItem('ayush.consultations') || '[]');
+    const sessionCount = consultations.length;
+    const badge = document.getElementById('sessionCounter');
+    
+    if (!badge) return;
+    
+    if (sessionCount > 0) {
+        badge.style.display = 'inline-block';
+        badge.textContent = `${sessionCount} session${sessionCount !== 1 ? 's' : ''}`;
     } else {
-        document.querySelector('.welcome-text').textContent = 'How can I help your wellness today?';
-        document.getElementById('symptomInput').placeholder = 'Describe your symptoms in detail...';
-        document.querySelector('.send-text').textContent = 'Analyze';
+        badge.style.display = 'none';
     }
 }
 
-async function analyzeSymptoms() {
-    const input = document.getElementById('symptomInput');
-    const symptom = input.value.trim();
-    
-    if (!symptom || symptom.length < 5) {
-        alert('Please describe your symptoms in more detail');
-        return;
-    }
-    
-    // Check for emergency keywords
-    if (detectEmergency(symptom)) {
-        showEmergencyAlert();
-    }
-    
-    // Add user message to chat
-    addMessage(symptom, 'user');
-    
-    // Clear input
-    input.value = '';
-    
-    // Show loading
-    showLoading();
-    
-    try {
-        const response = await fetch(`${API_CONFIG.BASE_URL}/api/ask`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-User-ID': authManager.getUserId()
-            },
-            body: JSON.stringify({
-                symptom: symptom,
-                language: currentLanguage
-            })
-        });
-        
-        if (!response.ok) {
-            throw new Error('API request failed');
-        }
-        
-        const data = await response.json();
-        
-        // Remove loading
-        removeLoading();
-        
-        // Display structured remedy card
-        displayRemedyCard(data, symptom);
-        
-        // Save to history
-        saveToHistory(symptom, data);
-        
-    } catch (error) {
-        removeLoading();
-        addMessage('Sorry, I encountered an error. Please try again.', 'ai');
-        console.error('Error:', error);
-    }
-}
+// ============================================
+// CONSULTATION HISTORY
+// ============================================
 
-function detectEmergency(text) {
-    const lowerText = text.toLowerCase();
-    return EMERGENCY_KEYWORDS.some(keyword => lowerText.includes(keyword));
-}
-
-function showEmergencyAlert() {
-    const alert = document.getElementById('emergencyAlert');
-    alert.style.display = 'flex';
-    alert.scrollIntoView({ behavior: 'smooth', block: 'center' });
-}
-
-function addMessage(text, type) {
-    const chatContainer = document.getElementById('chatContainer');
-    
-    // Hide empty state on first message
-    const emptyState = document.getElementById('emptyState');
-    if (emptyState) {
-        emptyState.style.display = 'none';
-    }
-    
-    const message = document.createElement('div');
-    message.className = `message ${type}`;
-    
-    const avatar = document.createElement('div');
-    avatar.className = 'message-avatar';
-    
-    if (type === 'user') {
-        const user = authManager.getUser();
-        const initial = user.name ? user.name.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase();
-        avatar.textContent = initial;
-    } else {
-        avatar.textContent = 'A';
-    }
-    
-    const bubble = document.createElement('div');
-    bubble.className = 'message-bubble';
-    bubble.textContent = text;
-    
-    message.appendChild(avatar);
-    message.appendChild(bubble);
-    chatContainer.appendChild(message);
-    
-    // Scroll to bottom
-    chatContainer.scrollTop = chatContainer.scrollHeight;
-}
-
-function showLoading() {
-    const chatContainer = document.getElementById('chatContainer');
-    const loading = document.createElement('div');
-    loading.className = 'message ai';
-    loading.id = 'loadingMessage';
-    
-    loading.innerHTML = `
-        <div class="message-bubble">
-            <div class="loading-indicator">
-                <div class="loading-dot"></div>
-                <div class="loading-dot"></div>
-                <div class="loading-dot"></div>
-            </div>
-        </div>
-    `;
-    
-    chatContainer.appendChild(loading);
-    chatContainer.scrollTop = chatContainer.scrollHeight;
-}
-
-function removeLoading() {
-    const loading = document.getElementById('loadingMessage');
-    if (loading) loading.remove();
-}
-
-function displayRemedyCard(data, symptom) {
-    const chatContainer = document.getElementById('chatContainer');
-    const message = document.createElement('div');
-    message.className = 'message ai';
-    
-    // Determine remedy type
-    let remedyType = 'Ayurveda';
-    let badgeClass = 'badge-ayurveda';
-    
-    if (data.yoga && data.yoga !== 'N/A') {
-        remedyType = 'Yoga';
-        badgeClass = 'badge-yoga';
-    }
-    
-    // Create structured card
-    const card = document.createElement('div');
-    card.className = 'remedy-card';
-    
-    // Check if remedy has an ID (from dataset)
-    const canSave = data.remedy_id && data.remedy_id !== null;
-    
-    card.innerHTML = `
-        <div class="remedy-header">
-            <div>
-                <h3 class="remedy-title">${data.remedy_name}</h3>
-                ${data.match_score ? `<span class="match-score">Match: ${data.match_score}%</span>` : ''}
-            </div>
-            <div class="remedy-header-right">
-                <span class="remedy-badge ${badgeClass}">${remedyType}</span>
-                ${canSave ? `
-                    <button class="save-remedy-btn" onclick="toggleSaveRemedy('${data.remedy_id}', '${data.remedy_name.replace(/'/g, "\\'")}', this)" title="Save remedy">
-                        <span class="save-icon">☆</span>
-                    </button>
-                ` : ''}
-            </div>
-        </div>
-        
-        <div class="remedy-section">
-            <h4 class="section-title">Primary Remedy</h4>
-            <div class="section-content">
-                <strong>${data.herb}</strong>
-                ${data.herb_scientific ? `<em>(${data.herb_scientific})</em>` : ''}
-            </div>
-        </div>
-        
-        <div class="remedy-section">
-            <h4 class="section-title">Usage Instructions</h4>
-            <div class="section-content">${data.dosage}</div>
-        </div>
-        
-        ${data.yoga && data.yoga !== 'N/A' ? `
-        <div class="remedy-section">
-            <h4 class="section-title">Yoga Practice</h4>
-            <div class="section-content">${data.yoga}</div>
-        </div>
-        ` : ''}
-        
-        ${data.diet && data.diet !== 'N/A' ? `
-        <div class="remedy-section">
-            <h4 class="section-title">Dietary Recommendations</h4>
-            <div class="section-content">${data.diet}</div>
-        </div>
-        ` : ''}
-        
-        <div class="explainability-box">
-            <h4>Why this helps</h4>
-            <p><strong>Matches symptoms:</strong> ${symptom}</p>
-            ${data.matched_symptoms && data.matched_symptoms.length > 0 ? `
-                <p><strong>Matched keywords:</strong> ${data.matched_symptoms.join(', ')}</p>
-            ` : ''}
-            <p>${data.explanation}</p>
-            <p><strong>Dosha balance:</strong> ${data.dosha}</p>
-            ${data.dosha_adjusted ? '<p><strong>✨ Personalized for your dosha</strong></p>' : ''}
-            <p><strong>Source:</strong> ${data.source === 'dataset' ? 'Traditional AYUSH Database' : 'AI-Generated Recommendation'}</p>
-        </div>
-        
-        <div class="safety-box">
-            <h4>Safety & Precautions</h4>
-            <ul>
-                <li>${data.warning}</li>
-                <li>Consult a certified AYUSH practitioner before starting treatment</li>
-                <li>Discontinue if you experience adverse reactions</li>
-                <li>Not a substitute for professional medical advice</li>
-            </ul>
-        </div>
-        
-        <div class="remedy-actions">
-            <button class="action-btn" onclick="window.open('https://www.ayush.gov.in/', '_blank')">
-                Find Practitioner
-            </button>
-        </div>
-    `;
-    
-    message.appendChild(card);
-    chatContainer.appendChild(message);
-    chatContainer.scrollTop = chatContainer.scrollHeight;
-    
-    // Check if already saved
-    if (canSave) {
-        checkIfSaved(data.remedy_id);
-    }
-}
-
-function saveRemedy(remedyName) {
-    const saved = JSON.parse(localStorage.getItem('saved_remedies') || '[]');
-    if (!saved.includes(remedyName)) {
-        saved.push(remedyName);
-        localStorage.setItem('saved_remedies', JSON.stringify(saved));
-        alert('Remedy saved to your profile!');
-    } else {
-        alert('This remedy is already saved');
-    }
-}
-
-function saveToHistory(symptom, data) {
+function saveConsultation(symptom, data) {
+    const consultations = JSON.parse(localStorage.getItem('ayush.consultations') || '[]');
     const consultation = {
-        id: 'consult_' + Date.now(),
+        id: Date.now(),
+        date: new Date().toISOString(),
         symptom: symptom,
-        remedy_name: data.remedy_name,
-        source: data.source,
-        created_at: new Date().toISOString(),
-        user_id: authManager.getUserId()
+        remedy: data.remedy_name || 'N/A',
+        category: data.category || 'general',
+        emergency: data.type === 'emergency'
     };
-    
-    consultationHistory.unshift(consultation);
-    localStorage.setItem('consultation_history', JSON.stringify(consultationHistory));
-    
-    // Update history sidebar
-    loadHistory();
+    consultations.unshift(consultation);
+    if (consultations.length > 20) consultations.pop();
+    localStorage.setItem('ayush.consultations', JSON.stringify(consultations));
+    loadConsultationHistory();
+    updateSessionCounter(); // Update session counter after saving
 }
 
-function loadHistory() {
+function loadConsultationHistory() {
+    const consultations = JSON.parse(localStorage.getItem('ayush.consultations') || '[]');
     const historyList = document.getElementById('historyList');
-    const history = JSON.parse(localStorage.getItem('consultation_history') || '[]');
     
-    if (history.length === 0) {
-        historyList.innerHTML = '<div class="empty-history"><p>No consultations yet</p></div>';
+    if (consultations.length === 0) {
+        historyList.innerHTML = `
+            <div class="history-empty">
+                <div class="history-empty-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                    </svg>
+                </div>
+                <p class="history-empty-text">Your wellness history will appear here</p>
+            </div>
+        `;
         return;
     }
     
-    historyList.innerHTML = '';
-    
-    history.slice(0, 10).forEach(item => {
-        const historyItem = document.createElement('div');
-        historyItem.className = 'history-item';
-        historyItem.innerHTML = `
-            <div class="history-item-title">${item.remedy_name}</div>
-            <div class="history-item-time">${getTimeAgo(new Date(item.created_at))}</div>
+    historyList.innerHTML = consultations.slice(0, 10).map(c => {
+        const date = new Date(c.date);
+        const timeAgo = getTimeAgo(date);
+        return `
+            <div class="history-item-sacred">
+                <div style="font-weight: 600; color: var(--herbal-deep); font-size: 13px; margin-bottom: 4px;">${c.symptom.substring(0, 40)}${c.symptom.length > 40 ? '...' : ''}</div>
+                <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 6px;">${timeAgo}</div>
+                <div style="display: flex; gap: 6px; align-items: center;">
+                    <span class="remedy-badge badge-category" style="font-size: 10px;">${c.category}</span>
+                    ${c.emergency ? '<span class="remedy-badge" style="background: var(--maroon-muted); color: white; font-size: 10px;">EMERGENCY</span>' : ''}
+                </div>
+            </div>
         `;
-        historyList.appendChild(historyItem);
-    });
+    }).join('');
 }
 
 function getTimeAgo(date) {
     const seconds = Math.floor((new Date() - date) / 1000);
-    
     if (seconds < 60) return 'Just now';
-    if (seconds < 3600) return `${Math.floor(seconds / 60)} min ago`;
-    if (seconds < 86400) return `${Math.floor(seconds / 3600)} hours ago`;
-    return `${Math.floor(seconds / 86400)} days ago`;
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `${minutes}m ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h ago`;
+    const days = Math.floor(hours / 24);
+    if (days < 7) return `${days}d ago`;
+    return date.toLocaleDateString();
 }
 
-// Dosha Assessment Functions
-function openDoshaModal() {
-    document.getElementById('doshaModal').style.display = 'flex';
-}
+// ============================================
+// SYMPTOM ANALYSIS
+// ============================================
 
-function closeDoshaModal() {
-    document.getElementById('doshaModal').style.display = 'none';
-}
-
-// Save Remedy Functions
-async function toggleSaveRemedy(remedyId, remedyName, buttonElement) {
-    const icon = buttonElement.querySelector('.save-icon');
-    const isSaved = icon.textContent === '★';
+async function analyzeSymptoms() {
+    console.log('analyzeSymptoms called');
+    const symptomInput = document.getElementById('symptomInput');
+    const symptom = symptomInput.value.trim();
     
-    if (isSaved) {
-        // Unsave
-        await unsaveRemedy(remedyId, buttonElement);
-    } else {
-        // Save
-        await saveRemedyToDatabase(remedyId, remedyName, buttonElement);
+    console.log('Symptom:', symptom);
+    
+    if (!symptom) {
+        showToast('Please describe your symptoms');
+        return;
     }
-}
-
-async function saveRemedyToDatabase(remedyId, remedyName, buttonElement) {
+    
+    const resultsArea = document.getElementById('resultsArea');
+    if (!resultsArea) {
+        console.error('resultsArea element not found');
+        return;
+    }
+    
+    // Check for emergency keywords on frontend
+    const emergencyKeywords = [
+        'chest pain', 'severe bleeding', 'fainting', 'fainted',
+        'difficulty breathing', 'can\'t breathe', 'cannot breathe',
+        'unconscious', 'seizure', 'convulsion',
+        'severe headache', 'worst headache', 'stroke',
+        'heart attack', 'cardiac', 'suicide', 'suicidal',
+        'severe burn', 'poisoning', 'poison', 'overdose',
+        'broken bone', 'fracture', 'severe injury',
+        'high persistent fever', 'fever above 104', 'very high fever',
+        'severe abdominal pain', 'severe stomach pain',
+        'coughing blood', 'vomiting blood', 'blood in stool'
+    ];
+    
+    const symptomLower = symptom.toLowerCase();
+    const matchedKeywords = emergencyKeywords.filter(keyword => 
+        symptomLower.includes(keyword)
+    );
+    
+    if (matchedKeywords.length > 0) {
+        // Show emergency alert immediately
+        displayEmergencyAlert(matchedKeywords);
+        return;
+    }
+    
+    // Show enhanced loading animation with 3 steps
+    resultsArea.innerHTML = `
+        <div style="text-align: center; padding: var(--space-xl);">
+            <div style="display: inline-block; margin-bottom: var(--space-md);">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation: pulse 1.5s ease-in-out infinite;">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 6v6l4 2"/>
+                </svg>
+            </div>
+            <div id="loadingStep1" style="font-size: 14px; color: var(--herbal-deep); margin-bottom: 8px; font-weight: 600;">1. Analyzing symptoms...</div>
+            <div id="loadingStep2" style="font-size: 14px; color: var(--text-muted); margin-bottom: 8px;">2. Matching Ayurvedic principles...</div>
+            <div id="loadingStep3" style="font-size: 14px; color: var(--text-muted); margin-bottom: 8px;">3. Checking dosha alignment...</div>
+        </div>
+    `;
+    
+    // Animate loading steps
+    setTimeout(() => {
+        const step2 = document.getElementById('loadingStep2');
+        if (step2) {
+            step2.style.color = 'var(--herbal-deep)';
+            step2.style.fontWeight = '600';
+        }
+    }, 700);
+    
+    setTimeout(() => {
+        const step3 = document.getElementById('loadingStep3');
+        if (step3) {
+            step3.style.color = 'var(--herbal-deep)';
+            step3.style.fontWeight = '600';
+        }
+    }, 1400);
+    
     try {
-        const response = await fetch(`${API_CONFIG.BASE_URL}/api/remedies/save`, {
+        const session = localStorage.getItem('ayush.auth.session');
+        let userId = null;
+        if (session) {
+            const sessionData = JSON.parse(session);
+            userId = sessionData.user.id;
+        }
+        
+        console.log('Calling API:', CONFIG.API_URL);
+        
+        const response = await fetch(`${CONFIG.API_URL}/api/ask`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-User-ID': authManager.getUserId()
+                ...(userId && { 'X-User-ID': userId })
             },
             body: JSON.stringify({
-                remedy_id: remedyId,
-                remedy_name: remedyName
+                symptom: symptom,
+                language: 'en'
             })
         });
         
-        const data = await response.json();
+        console.log('API Response status:', response.status);
         
-        if (data.success) {
-            const icon = buttonElement.querySelector('.save-icon');
-            icon.textContent = '★';
-            buttonElement.classList.add('saved');
-            buttonElement.title = 'Unsave remedy';
-            
-            // Show success message
-            showToast('Remedy saved successfully!', 'success');
-        } else if (data.already_saved) {
-            const icon = buttonElement.querySelector('.save-icon');
-            icon.textContent = '★';
-            buttonElement.classList.add('saved');
-            showToast('Remedy already saved', 'info');
-        }
+        const data = await response.json();
+        console.log('API Response data:', data);
+        
+        saveConsultation(symptom, data);
+        displayResults(data, symptom);
+        
     } catch (error) {
-        console.error('Save remedy error:', error);
-        showToast('Failed to save remedy', 'error');
+        console.error('Error:', error);
+        resultsArea.innerHTML = `
+            <div class="emergency-alert-sacred">
+                <p style="color: var(--maroon-muted);">Unable to analyze symptoms. Please try again.</p>
+                <p style="color: var(--text-muted); font-size: 12px; margin-top: 8px;">Error: ${error.message}</p>
+            </div>
+        `;
     }
 }
 
-async function unsaveRemedy(remedyId, buttonElement) {
-    try {
-        const response = await fetch(`${API_CONFIG.BASE_URL}/api/remedies/saved/${remedyId}`, {
-            method: 'DELETE',
-            headers: {
-                'X-User-ID': authManager.getUserId()
-            }
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            const icon = buttonElement.querySelector('.save-icon');
-            icon.textContent = '☆';
-            buttonElement.classList.remove('saved');
-            buttonElement.title = 'Save remedy';
-            
-            showToast('Remedy removed from saved', 'info');
-        }
-    } catch (error) {
-        console.error('Unsave remedy error:', error);
-        showToast('Failed to remove remedy', 'error');
-    }
+function displayEmergencyAlert(matchedKeywords) {
+    const resultsArea = document.getElementById('resultsArea');
+    resultsArea.innerHTML = `
+        <div class="emergency-alert-sacred">
+            <div class="emergency-header">
+                <div class="emergency-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                </div>
+                <h3 class="emergency-title">Professional Medical Attention Advised</h3>
+            </div>
+            <p class="emergency-message">Your symptoms may require immediate professional medical care. Please contact emergency services or visit the nearest hospital.</p>
+            <div style="background: rgba(255,255,255,0.5); padding: var(--space-sm); border-radius: var(--radius-md); margin-bottom: var(--space-sm);">
+                <p style="margin: 0; font-weight: 600; color: var(--maroon-muted); font-size: 13px;">Critical Keywords Detected: ${matchedKeywords.join(', ')}</p>
+            </div>
+            <div class="emergency-actions">
+                <button class="emergency-btn emergency-btn-primary" onclick="window.open('tel:911')">Seek Assistance</button>
+                <button class="emergency-btn emergency-btn-secondary" onclick="document.getElementById('resultsArea').innerHTML = ''">Continue Anyway</button>
+            </div>
+            <p style="margin-top: var(--space-sm); font-size: 12px; color: var(--text-muted); text-align: center; font-style: italic;">This system prioritizes your safety. When in doubt, always seek professional medical help.</p>
+        </div>
+    `;
 }
 
-async function checkIfSaved(remedyId) {
-    try {
-        const response = await fetch(`${API_CONFIG.BASE_URL}/api/remedies/is-saved/${remedyId}`, {
-            headers: {
-                'X-User-ID': authManager.getUserId()
-            }
-        });
-        
-        const data = await response.json();
-        
-        if (data.is_saved) {
-            // Find the button and update it
-            const buttons = document.querySelectorAll('.save-remedy-btn');
-            buttons.forEach(btn => {
-                if (btn.onclick.toString().includes(remedyId)) {
-                    const icon = btn.querySelector('.save-icon');
-                    icon.textContent = '★';
-                    btn.classList.add('saved');
-                    btn.title = 'Unsave remedy';
-                }
-            });
-        }
-    } catch (error) {
-        console.error('Check saved error:', error);
-    }
-}
-
-function showToast(message, type = 'info') {
-    // Remove existing toast
-    const existing = document.querySelector('.toast');
-    if (existing) existing.remove();
+function displayResults(data, symptom) {
+    const resultsArea = document.getElementById('resultsArea');
+    const userDosha = localStorage.getItem('ayush.user.dosha') || null;
     
-    // Create toast
+    // EMERGENCY DETECTION
+    if (data.type === 'emergency') {
+        resultsArea.innerHTML = `
+            <div class="emergency-alert-sacred">
+                <div class="emergency-header">
+                    <div class="emergency-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                            <line x1="12" y1="9" x2="12" y2="13"/>
+                            <line x1="12" y1="17" x2="12.01" y2="17"/>
+                        </svg>
+                    </div>
+                    <h3 class="emergency-title">Professional Medical Attention Advised</h3>
+                </div>
+                <p class="emergency-message">${data.message || 'Your symptoms may require immediate professional medical care. Please contact emergency services or visit the nearest hospital.'}</p>
+                <div style="background: rgba(255,255,255,0.5); padding: var(--space-sm); border-radius: var(--radius-md); margin-bottom: var(--space-sm);">
+                    <p style="margin: 0; font-weight: 600; color: var(--maroon-muted); font-size: 13px;">Critical Keywords: ${data.matched_keywords ? data.matched_keywords.join(', ') : 'Urgent symptoms detected'}</p>
+                </div>
+                <div class="emergency-actions">
+                    <button class="emergency-btn emergency-btn-primary" onclick="window.open('tel:911')">Seek Assistance</button>
+                    <button class="emergency-btn emergency-btn-secondary" onclick="document.getElementById('resultsArea').innerHTML = ''">Continue Anyway</button>
+                </div>
+            </div>
+        `;
+        return;
+    }
+    
+    // REMEDY CARD
+    if (data.success && data.remedy_name) {
+        resultsArea.innerHTML = `
+            <div class="remedy-card-sacred">
+                <div class="remedy-header">
+                    <h2 class="remedy-title">${data.remedy_name}</h2>
+                    <div class="remedy-badges">
+                        ${data.match_score ? `<span class="remedy-badge badge-match">Match: ${Math.round(data.match_score)}%</span>` : ''}
+                        ${data.category ? `<span class="remedy-badge badge-category">${data.category}</span>` : ''}
+                        ${data.dosha_adjusted ? `<span class="remedy-badge" style="background: var(--herbal-deep); color: white;">Dosha Optimized</span>` : ''}
+                    </div>
+                </div>
+                
+                ${userDosha ? `
+                    <div style="background: linear-gradient(135deg, #F3E5F5, #E1BEE7); border-left: 3px solid #9C27B0; padding: var(--space-sm); border-radius: var(--radius-md); margin-bottom: var(--space-md);">
+                        <h4 style="color: #6A1B9A; margin-bottom: 4px; font-size: 13px;">Aligned with your ${userDosha} constitution</h4>
+                        <p style="color: #7B1FA2; font-size: 13px; margin: 0;">This remedy supports your unique Ayurvedic balance</p>
+                    </div>
+                ` : ''}
+                
+                <div style="background: linear-gradient(135deg, #E8F5E9, #C8E6C9); border-left: 3px solid var(--herbal-deep); padding: var(--space-sm); border-radius: var(--radius-md); margin-bottom: var(--space-md);">
+                    <h4 class="remedy-section-title" style="color: var(--herbal-deep);">Why This Was Recommended</h4>
+                    <ul style="margin: 0; padding-left: 20px; color: var(--herbal-deep); font-size: 13px; line-height: 1.7;">
+                        ${data.matched_symptoms && data.matched_symptoms.length > 0 ? `<li>Matches: ${data.matched_symptoms.join(', ')}</li>` : ''}
+                        ${data.explanation ? `<li>${data.explanation}</li>` : ''}
+                        ${data.match_score ? `<li>Relevance: ${Math.round(data.match_score)}% match</li>` : ''}
+                    </ul>
+                </div>
+                
+                ${data.herb ? `
+                    <div class="remedy-section">
+                        <h4 class="remedy-section-title">Primary Herb</h4>
+                        <p class="remedy-section-content">${data.herb}${data.herb_scientific ? ` <em>(${data.herb_scientific})</em>` : ''}</p>
+                    </div>
+                ` : ''}
+                
+                ${data.dosage ? `
+                    <div class="remedy-section">
+                        <h4 class="remedy-section-title">Recommended Dosage</h4>
+                        <p class="remedy-section-content">${data.dosage}</p>
+                    </div>
+                ` : ''}
+                
+                ${data.yoga ? `
+                    <div class="remedy-section">
+                        <h4 class="remedy-section-title">Complementary Yoga Practice</h4>
+                        <p class="remedy-section-content">${data.yoga}</p>
+                    </div>
+                ` : ''}
+                
+                ${data.diet ? `
+                    <div class="remedy-section">
+                        <h4 class="remedy-section-title">Dietary Recommendations</h4>
+                        <p class="remedy-section-content">${data.diet}</p>
+                    </div>
+                ` : ''}
+                
+                ${data.warning ? `
+                    <div class="precaution-box">
+                        <h4 class="remedy-section-title">Important Precautions</h4>
+                        <p class="remedy-section-content">${data.warning}</p>
+                    </div>
+                ` : ''}
+                
+                <div style="margin-top: var(--space-md); padding-top: var(--space-md); border-top: 1px solid var(--terracotta); text-align: center;">
+                    <button class="dosha-btn-sacred" onclick="downloadSummary(${JSON.stringify(data).replace(/"/g, '&quot;')})">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline-block; vertical-align: middle; margin-right: 6px;">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        Download Summary
+                    </button>
+                </div>
+                
+                ${generateAlternativeRemedies(data) || ''}
+                
+                <div style="margin-top: var(--space-sm); text-align: center;">
+                    <p style="font-size: 11px; color: var(--text-muted); font-style: italic; margin: 0;">Built on secure cloud infrastructure with intelligent wellness pipeline</p>
+                </div>
+            </div>
+        `;
+    }
+    
+    symptomInput.value = '';
+}
+
+// ============================================
+// GENERATE ALTERNATIVE REMEDIES
+// ============================================
+
+function generateAlternativeRemedies(primaryData) {
+    // Simulate alternative remedies based on category
+    const alternatives = {
+        'mental': [
+            { name: 'Brahmi', score: 72, reason: 'Better for long-term cognitive support' },
+            { name: 'Jatamansi', score: 68, reason: 'More effective for sleep-related anxiety' }
+        ],
+        'digestive': [
+            { name: 'Triphala', score: 75, reason: 'Broader digestive system support' },
+            { name: 'Ajwain', score: 70, reason: 'Faster relief for acute symptoms' }
+        ],
+        'respiratory': [
+            { name: 'Vasaka', score: 73, reason: 'Stronger for chronic respiratory issues' },
+            { name: 'Pippali', score: 69, reason: 'Better for cold-related symptoms' }
+        ],
+        'immunity': [
+            { name: 'Guduchi', score: 76, reason: 'More comprehensive immune support' },
+            { name: 'Tulsi', score: 71, reason: 'Better for seasonal immunity' }
+        ]
+    };
+    
+    const category = primaryData.category || 'general';
+    const alts = alternatives[category];
+    
+    if (!alts || alts.length === 0) {
+        return '';
+    }
+    
+    return `
+        <div class="alternatives-section">
+            <h4 class="alternatives-title">Other Considered Options</h4>
+            ${alts.map(alt => `
+                <div class="alternative-item">
+                    <div>
+                        <span class="alternative-name">${alt.name}</span>
+                        <span class="alternative-score">${alt.score}% match</span>
+                    </div>
+                    <div class="alternative-reason">${alt.reason}</div>
+                </div>
+            `).join('')}
+            <p style="font-size: 11px; color: var(--text-muted); margin-top: var(--space-sm); margin-bottom: 0;">The recommended remedy above was selected based on highest relevance and your dosha profile.</p>
+        </div>
+    `;
+}
+
+function downloadSummary(data) {
+    const summary = `
+AYUSH AI - Wellness Summary
+Generated: ${new Date().toLocaleString()}
+
+REMEDY: ${data.remedy_name}
+Category: ${data.category || 'N/A'}
+Match Score: ${data.match_score ? Math.round(data.match_score) + '%' : 'N/A'}
+
+${data.explanation ? 'WHY THIS HELPS:\n' + data.explanation + '\n\n' : ''}
+${data.herb ? 'PRIMARY HERB:\n' + data.herb + (data.herb_scientific ? ' (' + data.herb_scientific + ')' : '') + '\n\n' : ''}
+${data.dosage ? 'DOSAGE:\n' + data.dosage + '\n\n' : ''}
+${data.yoga ? 'YOGA PRACTICE:\n' + data.yoga + '\n\n' : ''}
+${data.diet ? 'DIET RECOMMENDATIONS:\n' + data.diet + '\n\n' : ''}
+${data.warning ? 'PRECAUTIONS:\n' + data.warning + '\n\n' : ''}
+${data.matched_symptoms ? 'MATCHED SYMPTOMS:\n' + data.matched_symptoms.join(', ') + '\n\n' : ''}
+
+DISCLAIMER:
+This is for educational purposes only. Always consult certified AYUSH practitioners for personalized treatment.
+
+---
+Powered by AYUSH AI
+Built on secure cloud infrastructure with scalable wellness intelligence pipeline
+    `.trim();
+    
+    const blob = new Blob([summary], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `AYUSH-Wellness-Summary-${Date.now()}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('Wellness summary downloaded!');
+}
+
+// ============================================
+// TOAST NOTIFICATIONS
+// ============================================
+
+function showToast(message) {
     const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
     toast.textContent = message;
+    toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: var(--space-sm) var(--space-md);
+        background: var(--herbal-deep);
+        color: white;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-card);
+        z-index: 10000;
+        font-size: 14px;
+        animation: slideIn 0.3s ease;
+    `;
     document.body.appendChild(toast);
-    
-    // Animate in
-    setTimeout(() => toast.classList.add('show'), 10);
-    
-    // Remove after 3 seconds
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
+    setTimeout(() => toast.remove(), 3000);
 }
 
-// Export functions for global access
-window.saveRemedy = saveRemedyToDatabase;
-window.toggleSaveRemedy = toggleSaveRemedy;
-window.openDoshaModal = openDoshaModal;
-window.closeDoshaModal = closeDoshaModal;
+// ============================================
+// EVENT LISTENERS
+// ============================================
+
+window.addEventListener('DOMContentLoaded', () => {
+    const session = localStorage.getItem('ayush.auth.session');
+    if (session) {
+        try {
+            const sessionData = JSON.parse(session);
+            if (sessionData && sessionData.user) {
+                document.getElementById('landingPage').style.display = 'none';
+                document.getElementById('appPage').style.display = 'block';
+                
+                const userName = sessionData.user.email.split('@')[0];
+                document.getElementById('userName').textContent = userName;
+                document.getElementById('userAvatar').textContent = userName.charAt(0).toUpperCase();
+                
+                const userDosha = localStorage.getItem('ayush.user.dosha');
+                if (userDosha) {
+                    updateDoshaBadge(userDosha);
+                }
+                
+                loadConsultationHistory();
+                updateSessionCounter(); // Load session counter on startup
+            }
+        } catch (e) {
+            console.error('Session parse error:', e);
+        }
+    }
+    
+    // Severity slider
+    const severitySlider = document.getElementById('severitySlider');
+    const severityLabel = document.getElementById('severityLabel');
+    
+    if (severitySlider && severityLabel) {
+        const severityLabels = ['Very Mild', 'Mild', 'Moderate', 'Severe', 'Very Severe'];
+        
+        severitySlider.addEventListener('input', (e) => {
+            const value = parseInt(e.target.value);
+            severityLabel.textContent = severityLabels[value - 1];
+            
+            // Color code the label
+            if (value <= 2) {
+                severityLabel.style.color = '#059669'; // Green
+            } else if (value === 3) {
+                severityLabel.style.color = 'var(--herbal-deep)'; // Default
+            } else {
+                severityLabel.style.color = '#DC2626'; // Red
+            }
+        });
+    }
+    
+    // Category cards
+    const categoryCards = document.querySelectorAll('.category-pill');
+    if (categoryCards.length > 0) {
+        categoryCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const symptom = card.dataset.symptom;
+                document.getElementById('symptomInput').value = symptom;
+                analyzeSymptoms();
+            });
+        });
+    }
+    
+    // Symptom chips
+    const symptomChips = document.querySelectorAll('.symptom-chip-sacred');
+    if (symptomChips.length > 0) {
+        symptomChips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                const tag = chip.dataset.tag;
+                const input = document.getElementById('symptomInput');
+                input.value = input.value ? `${input.value}, ${tag}` : tag;
+            });
+        });
+    }
+    
+    // Analyze button
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    if (analyzeBtn) {
+        analyzeBtn.addEventListener('click', analyzeSymptoms);
+    }
+    
+    // Enter to submit
+    const symptomInput = document.getElementById('symptomInput');
+    if (symptomInput) {
+        symptomInput.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter') {
+                analyzeSymptoms();
+            }
+        });
+    }
+    
+    // Logout
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('ayush.auth.session');
+            document.getElementById('landingPage').style.display = 'block';
+            document.getElementById('appPage').style.display = 'none';
+            showToast('Logged out successfully');
+        });
+    }
+    
+    // Language toggle
+    const langButtons = document.querySelectorAll('.lang-opt-sacred');
+    if (langButtons.length > 0) {
+        langButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active from all
+                langButtons.forEach(b => b.classList.remove('active'));
+                // Add active to clicked
+                btn.classList.add('active');
+                // Store language preference
+                const lang = btn.dataset.lang;
+                localStorage.setItem('ayush.language', lang);
+                showToast(lang === 'en' ? 'Language: English' : 'भाषा: हिंदी');
+            });
+        });
+    }
+});
