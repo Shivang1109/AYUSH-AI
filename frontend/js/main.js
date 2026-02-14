@@ -649,21 +649,4 @@ window.addEventListener('DOMContentLoaded', () => {
             showToast('Logged out successfully');
         });
     }
-    
-    // Language toggle
-    const langButtons = document.querySelectorAll('.lang-opt-sacred');
-    if (langButtons.length > 0) {
-        langButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                // Remove active from all
-                langButtons.forEach(b => b.classList.remove('active'));
-                // Add active to clicked
-                btn.classList.add('active');
-                // Store language preference
-                const lang = btn.dataset.lang;
-                localStorage.setItem('ayush.language', lang);
-                showToast(lang === 'en' ? 'Language: English' : 'भाषा: हिंदी');
-            });
-        });
-    }
 });

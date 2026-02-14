@@ -1,12 +1,13 @@
 {
-  "name": "AYUSH AI Assistant",
+  "name": "AYUSH AI - Wellness Assistant",
   "short_name": "AYUSH AI",
-  "description": "AI-powered AYUSH health recommendations",
+  "description": "AI-powered traditional AYUSH wellness guidance with dosha assessment and personalized recommendations",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#10b981",
-  "orientation": "portrait",
+  "background_color": "#F5EFE6",
+  "theme_color": "#2F4F2F",
+  "orientation": "portrait-primary",
+  "categories": ["health", "lifestyle", "medical"],
   "icons": [
     {
       "src": "/icon-192.png",
@@ -15,10 +16,27 @@
       "purpose": "any maskable"
     },
     {
-      "src": "/icon-512.png",
+      "src": "/icon-192.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Dosha Quiz",
+      "short_name": "Quiz",
+      "description": "Take the Ayurvedic constitution assessment",
+      "url": "/?action=dosha-quiz",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "New Consultation",
+      "short_name": "Consult",
+      "description": "Get wellness recommendations",
+      "url": "/?action=consult",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     }
   ]
 }
