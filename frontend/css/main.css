@@ -79,8 +79,17 @@ body {
 }
 
 .brand-icon {
-    font-size: 2.5rem;
-    filter: drop-shadow(0 2px 6px rgba(255, 153, 51, 0.3));
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, var(--saffron), var(--saffron-light));
+    color: white;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(255, 153, 51, 0.3);
 }
 
 .brand-name {
@@ -109,6 +118,25 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 1rem;
+}
+
+.dosha-quiz-btn {
+    padding: 0.6rem 1.5rem;
+    background: linear-gradient(135deg, #9333EA, #A855F7);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(147, 51, 234, 0.25);
+}
+
+.dosha-quiz-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(147, 51, 234, 0.35);
 }
 
 .language-switch {
@@ -261,13 +289,6 @@ body {
     margin-bottom: 3rem;
 }
 
-.namaste {
-    display: block;
-    font-size: 3.5rem;
-    margin-bottom: 1.25rem;
-    filter: drop-shadow(0 2px 8px rgba(255, 153, 51, 0.2));
-}
-
 .welcome-text {
     display: block;
     font-size: 1.75rem;
@@ -303,10 +324,6 @@ body {
     transform: translateY(-6px);
     box-shadow: var(--shadow-lg);
     background: var(--warm-beige);
-}
-
-.quick-icon {
-    font-size: 2.75rem;
 }
 
 .quick-label {
@@ -370,12 +387,6 @@ body {
     border: 2px dashed var(--border-soft);
 }
 
-.empty-icon {
-    font-size: 5rem;
-    margin-bottom: 1.5rem;
-    opacity: 0.6;
-}
-
 .empty-state h3 {
     font-size: 1.5rem;
     color: var(--text-primary);
@@ -424,7 +435,9 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.25rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
     flex-shrink: 0;
     box-shadow: var(--shadow-sm);
 }
@@ -470,9 +483,63 @@ body {
 }
 
 .remedy-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
     margin-bottom: 2rem;
     padding-bottom: 1.5rem;
     border-bottom: 2px solid var(--soft-cream);
+}
+
+.remedy-header-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.match-score {
+    display: inline-block;
+    padding: 0.35rem 0.75rem;
+    background: linear-gradient(135deg, #10B981, #34D399);
+    color: white;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-top: 0.5rem;
+}
+
+.save-remedy-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid var(--border-soft);
+    background: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.save-remedy-btn:hover {
+    border-color: var(--saffron);
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(255, 153, 51, 0.25);
+}
+
+.save-remedy-btn.saved {
+    background: linear-gradient(135deg, var(--saffron), var(--saffron-light));
+    border-color: var(--saffron);
+}
+
+.save-icon {
+    font-size: 1.5rem;
+    color: var(--saffron);
+    transition: all 0.3s ease;
+}
+
+.save-remedy-btn.saved .save-icon {
+    color: white;
 }
 
 .remedy-title {
@@ -707,13 +774,7 @@ body {
     border-radius: 20px;
     padding: 2rem;
     margin: 2.5rem 0;
-    display: flex;
-    gap: 1.5rem;
     box-shadow: 0 4px 20px rgba(229, 115, 115, 0.2);
-}
-
-.alert-icon {
-    font-size: 3rem;
 }
 
 .alert-content h3 {
@@ -1003,13 +1064,6 @@ body {
     margin-bottom: 2.5rem;
 }
 
-.namaste {
-    display: block;
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    filter: drop-shadow(0 2px 8px rgba(90, 154, 124, 0.2));
-}
-
 .welcome-text {
     display: block;
     font-size: 2rem;
@@ -1062,11 +1116,6 @@ body {
     border-color: var(--primary-green);
     transform: translateY(-8px);
     box-shadow: var(--shadow-large);
-}
-
-.quick-icon {
-    font-size: 3rem;
-    filter: drop-shadow(0 2px 8px rgba(90, 154, 124, 0.2));
 }
 
 .quick-label {
@@ -1622,11 +1671,14 @@ body {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    background: linear-gradient(135deg, var(--saffron), var(--saffron-light));
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.25rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+    box-shadow: var(--shadow-sm);
 }
 
 .user-name {
@@ -1734,12 +1786,6 @@ body {
     margin-bottom: 2rem;
 }
 
-.namaste {
-    display: block;
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
-}
-
 .welcome-text {
     display: block;
     font-size: 1.75rem;
@@ -1773,10 +1819,6 @@ body {
     border-color: var(--primary);
     transform: translateY(-4px);
     box-shadow: var(--shadow-lg);
-}
-
-.quick-icon {
-    font-size: 2.5rem;
 }
 
 .quick-label {
@@ -2304,11 +2346,6 @@ body {
     text-align: center;
 }
 
-.about-card .card-icon {
-    font-size: 4rem;
-    margin-bottom: 1.5rem;
-}
-
 .about-card h3 {
     font-size: 1.75rem;
     font-weight: 600;
@@ -2344,11 +2381,6 @@ body {
     transform: translateY(-8px);
     box-shadow: var(--shadow-lg);
     border-color: var(--saffron-light);
-}
-
-.system-icon {
-    font-size: 3.5rem;
-    margin-bottom: 1.5rem;
 }
 
 .system-card h3 {
@@ -2473,11 +2505,6 @@ body {
     box-shadow: var(--shadow-md);
 }
 
-.feature-icon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-}
-
 .feature-card h4 {
     font-size: 1.15rem;
     font-weight: 600;
@@ -2594,4 +2621,41 @@ body {
     .about-card.featured {
         padding: 2rem;
     }
+}
+
+
+/* Toast Notifications */
+.toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    padding: 1rem 1.5rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    font-weight: 600;
+    z-index: 10000;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.toast-success {
+    border-left: 4px solid #10B981;
+    color: #065F46;
+}
+
+.toast-error {
+    border-left: 4px solid #EF4444;
+    color: #991B1B;
+}
+
+.toast-info {
+    border-left: 4px solid #3B82F6;
+    color: #1E40AF;
 }

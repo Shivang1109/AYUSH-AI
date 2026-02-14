@@ -98,7 +98,7 @@ function createActivityCard(item) {
     
     card.innerHTML = `
         <div class="activity-icon">
-            ${item.source === 'dataset' ? '📚' : '🤖'}
+            ${item.source === 'dataset' ? 'DB' : 'AI'}
         </div>
         <div class="activity-content">
             <h4>${item.remedy_name}</h4>

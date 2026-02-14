@@ -1,0 +1,436 @@
+/* Dosha Quiz Modal Styles */
+
+.dosha-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.dosha-modal.active {
+    opacity: 1;
+}
+
+.dosha-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+}
+
+.dosha-modal-content {
+    position: relative;
+    background: white;
+    border-radius: 24px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.dosha-modal-header {
+    padding: 2rem;
+    border-bottom: 2px solid #F3F4F6;
+    position: relative;
+}
+
+.dosha-modal-header h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1F2937;
+    margin-bottom: 0.5rem;
+}
+
+.dosha-subtitle {
+    color: #6B7280;
+    font-size: 0.95rem;
+}
+
+.dosha-close-btn {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #9CA3AF;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.dosha-close-btn:hover {
+    background: #F3F4F6;
+    color: #1F2937;
+}
+
+.dosha-progress {
+    padding: 1rem 2rem;
+    background: #F9FAFB;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.dosha-progress-bar {
+    flex: 1;
+    height: 8px;
+    background: #E5E7EB;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+
+.dosha-progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: var(--progress, 0%);
+    background: linear-gradient(90deg, #FF9933, #FFB366);
+    transition: width 0.3s ease;
+}
+
+.dosha-progress-text {
+    font-size: 0.875rem;
+    color: #6B7280;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.dosha-modal-body {
+    padding: 2rem;
+    min-height: 300px;
+}
+
+.dosha-question-container {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.dosha-question {
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: #1F2937;
+    margin-bottom: 2rem;
+    line-height: 1.5;
+}
+
+.dosha-options {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.dosha-option {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    background: white;
+    border: 2px solid #E5E7EB;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-align: left;
+}
+
+.dosha-option:hover {
+    border-color: #FF9933;
+    background: #FFF8F0;
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(255, 153, 51, 0.15);
+}
+
+.dosha-option-letter {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #FF9933, #FFB366);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.95rem;
+    flex-shrink: 0;
+}
+
+.dosha-option-text {
+    flex: 1;
+    color: #374151;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.dosha-back-btn {
+    padding: 0.75rem 1.5rem;
+    background: white;
+    border: 2px solid #E5E7EB;
+    border-radius: 12px;
+    color: #6B7280;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.dosha-back-btn:hover {
+    border-color: #9CA3AF;
+    color: #374151;
+}
+
+.dosha-loading {
+    text-align: center;
+    padding: 3rem 2rem;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #F3F4F6;
+    border-top-color: #FF9933;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1.5rem;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.dosha-loading p {
+    color: #6B7280;
+    font-size: 1.05rem;
+}
+
+.dosha-results {
+    animation: fadeIn 0.5s ease-out;
+}
+
+.dosha-result-header {
+    text-align: center;
+    padding: 2rem 0;
+    border-bottom: 2px solid #F3F4F6;
+    margin-bottom: 2rem;
+}
+
+.dosha-icon-large {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    margin: 0 auto 1rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.dosha-result-header h3 {
+    font-size: 0.95rem;
+    color: #6B7280;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+}
+
+.dosha-result-name {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+}
+
+.dosha-percentage {
+    font-size: 1.25rem;
+    color: #6B7280;
+    font-weight: 600;
+}
+
+.dosha-secondary {
+    font-size: 0.95rem;
+    color: #9CA3AF;
+    margin-top: 0.5rem;
+}
+
+.dosha-description,
+.dosha-characteristics,
+.dosha-recommendations {
+    margin-bottom: 2rem;
+}
+
+.dosha-description h4,
+.dosha-characteristics h4,
+.dosha-recommendations h4 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #1F2937;
+    margin-bottom: 1rem;
+}
+
+.dosha-description p {
+    color: #4B5563;
+    line-height: 1.7;
+    font-size: 1rem;
+}
+
+.dosha-characteristics ul,
+.dosha-recommendations ul {
+    list-style: none;
+    padding: 0;
+}
+
+.dosha-characteristics li,
+.dosha-recommendations li {
+    padding: 0.75rem 0;
+    padding-left: 2rem;
+    position: relative;
+    color: #4B5563;
+    line-height: 1.6;
+}
+
+.dosha-characteristics li::before,
+.dosha-recommendations li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: #10B981;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.dosha-actions {
+    display: flex;
+    gap: 1rem;
+    padding-top: 2rem;
+    border-top: 2px solid #F3F4F6;
+}
+
+.dosha-done-btn,
+.dosha-retake-btn {
+    flex: 1;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.dosha-done-btn {
+    background: linear-gradient(135deg, #FF9933, #FFB366);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 16px rgba(255, 153, 51, 0.3);
+}
+
+.dosha-done-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 153, 51, 0.4);
+}
+
+.dosha-retake-btn {
+    background: white;
+    color: #6B7280;
+    border: 2px solid #E5E7EB;
+}
+
+.dosha-retake-btn:hover {
+    border-color: #9CA3AF;
+    color: #374151;
+}
+
+.dosha-error {
+    text-align: center;
+    padding: 3rem 2rem;
+}
+
+.dosha-error p {
+    color: #DC2626;
+    font-size: 1.05rem;
+    margin-bottom: 1.5rem;
+}
+
+.dosha-retry-btn {
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, #FF9933, #FFB366);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.dosha-retry-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 153, 51, 0.4);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .dosha-modal-content {
+        width: 95%;
+        max-height: 95vh;
+    }
+
+    .dosha-modal-header,
+    .dosha-modal-body {
+        padding: 1.5rem;
+    }
+
+    .dosha-question {
+        font-size: 1.15rem;
+    }
+
+    .dosha-option {
+        padding: 1rem;
+    }
+
+    .dosha-actions {
+        flex-direction: column;
+    }
+}

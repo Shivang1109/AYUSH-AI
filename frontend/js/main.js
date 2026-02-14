@@ -23,7 +23,15 @@ function initializeApp() {
     }
     
     const user = authManager.getUser();
-    document.getElementById('headerUserName').textContent = user.name || user.email.split('@')[0];
+    const userName = user.name || user.email.split('@')[0];
+    document.getElementById('headerUserName').textContent = userName;
+    
+    // Set user avatar initial
+    const userAvatar = document.querySelector('.user-avatar');
+    if (userAvatar) {
+        const initial = user.name ? user.name.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase();
+        userAvatar.textContent = initial;
+    }
     
     // Load consultation history
     consultationHistory = JSON.parse(localStorage.getItem('consultation_history') || '[]');
@@ -180,7 +188,14 @@ function addMessage(text, type) {
     
     const avatar = document.createElement('div');
     avatar.className = 'message-avatar';
-    avatar.textContent = type === 'user' ? '👤' : '🌿';
+    
+    if (type === 'user') {
+        const user = authManager.getUser();
+        const initial = user.name ? user.name.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase();
+        avatar.textContent = initial;
+    } else {
+        avatar.textContent = 'A';
+    }
     
     const bubble = document.createElement('div');
     bubble.className = 'message-bubble';
@@ -237,16 +252,27 @@ function displayRemedyCard(data, symptom) {
     const card = document.createElement('div');
     card.className = 'remedy-card';
     
+    // Check if remedy has an ID (from dataset)
+    const canSave = data.remedy_id && data.remedy_id !== null;
+    
     card.innerHTML = `
         <div class="remedy-header">
             <div>
                 <h3 class="remedy-title">${data.remedy_name}</h3>
+                ${data.match_score ? `<span class="match-score">Match: ${data.match_score}%</span>` : ''}
             </div>
-            <span class="remedy-badge ${badgeClass}">${remedyType}</span>
+            <div class="remedy-header-right">
+                <span class="remedy-badge ${badgeClass}">${remedyType}</span>
+                ${canSave ? `
+                    <button class="save-remedy-btn" onclick="toggleSaveRemedy('${data.remedy_id}', '${data.remedy_name.replace(/'/g, "\\'")}', this)" title="Save remedy">
+                        <span class="save-icon">☆</span>
+                    </button>
+                ` : ''}
+            </div>
         </div>
         
         <div class="remedy-section">
-            <h4 class="section-title">🌿 Primary Remedy</h4>
+            <h4 class="section-title">Primary Remedy</h4>
             <div class="section-content">
                 <strong>${data.herb}</strong>
                 ${data.herb_scientific ? `<em>(${data.herb_scientific})</em>` : ''}
@@ -254,34 +280,38 @@ function displayRemedyCard(data, symptom) {
         </div>
         
         <div class="remedy-section">
-            <h4 class="section-title">📋 Usage Instructions</h4>
+            <h4 class="section-title">Usage Instructions</h4>
             <div class="section-content">${data.dosage}</div>
         </div>
         
         ${data.yoga && data.yoga !== 'N/A' ? `
         <div class="remedy-section">
-            <h4 class="section-title">🧘 Yoga Practice</h4>
+            <h4 class="section-title">Yoga Practice</h4>
             <div class="section-content">${data.yoga}</div>
         </div>
         ` : ''}
         
         ${data.diet && data.diet !== 'N/A' ? `
         <div class="remedy-section">
-            <h4 class="section-title">🍽️ Dietary Recommendations</h4>
+            <h4 class="section-title">Dietary Recommendations</h4>
             <div class="section-content">${data.diet}</div>
         </div>
         ` : ''}
         
         <div class="explainability-box">
-            <h4>💡 Why this helps</h4>
+            <h4>Why this helps</h4>
             <p><strong>Matches symptoms:</strong> ${symptom}</p>
+            ${data.matched_symptoms && data.matched_symptoms.length > 0 ? `
+                <p><strong>Matched keywords:</strong> ${data.matched_symptoms.join(', ')}</p>
+            ` : ''}
             <p>${data.explanation}</p>
             <p><strong>Dosha balance:</strong> ${data.dosha}</p>
+            ${data.dosha_adjusted ? '<p><strong>✨ Personalized for your dosha</strong></p>' : ''}
             <p><strong>Source:</strong> ${data.source === 'dataset' ? 'Traditional AYUSH Database' : 'AI-Generated Recommendation'}</p>
         </div>
         
         <div class="safety-box">
-            <h4>⚠️ Safety & Precautions</h4>
+            <h4>Safety & Precautions</h4>
             <ul>
                 <li>${data.warning}</li>
                 <li>Consult a certified AYUSH practitioner before starting treatment</li>
@@ -291,11 +321,8 @@ function displayRemedyCard(data, symptom) {
         </div>
         
         <div class="remedy-actions">
-            <button class="action-btn primary" onclick="saveRemedy('${data.remedy_name}')">
-                ⭐ Save Remedy
-            </button>
             <button class="action-btn" onclick="window.open('https://www.ayush.gov.in/', '_blank')">
-                🏥 Find Practitioner
+                Find Practitioner
             </button>
         </div>
     `;
@@ -303,6 +330,11 @@ function displayRemedyCard(data, symptom) {
     message.appendChild(card);
     chatContainer.appendChild(message);
     chatContainer.scrollTop = chatContainer.scrollHeight;
+    
+    // Check if already saved
+    if (canSave) {
+        checkIfSaved(data.remedy_id);
+    }
 }
 
 function saveRemedy(remedyName) {
@@ -310,7 +342,7 @@ function saveRemedy(remedyName) {
     if (!saved.includes(remedyName)) {
         saved.push(remedyName);
         localStorage.setItem('saved_remedies', JSON.stringify(saved));
-        alert('✅ Remedy saved to your profile!');
+        alert('Remedy saved to your profile!');
     } else {
         alert('This remedy is already saved');
     }
@@ -373,7 +405,131 @@ function closeDoshaModal() {
     document.getElementById('doshaModal').style.display = 'none';
 }
 
+// Save Remedy Functions
+async function toggleSaveRemedy(remedyId, remedyName, buttonElement) {
+    const icon = buttonElement.querySelector('.save-icon');
+    const isSaved = icon.textContent === '★';
+    
+    if (isSaved) {
+        // Unsave
+        await unsaveRemedy(remedyId, buttonElement);
+    } else {
+        // Save
+        await saveRemedyToDatabase(remedyId, remedyName, buttonElement);
+    }
+}
+
+async function saveRemedyToDatabase(remedyId, remedyName, buttonElement) {
+    try {
+        const response = await fetch(`${API_CONFIG.BASE_URL}/api/remedies/save`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-User-ID': authManager.getUserId()
+            },
+            body: JSON.stringify({
+                remedy_id: remedyId,
+                remedy_name: remedyName
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            const icon = buttonElement.querySelector('.save-icon');
+            icon.textContent = '★';
+            buttonElement.classList.add('saved');
+            buttonElement.title = 'Unsave remedy';
+            
+            // Show success message
+            showToast('Remedy saved successfully!', 'success');
+        } else if (data.already_saved) {
+            const icon = buttonElement.querySelector('.save-icon');
+            icon.textContent = '★';
+            buttonElement.classList.add('saved');
+            showToast('Remedy already saved', 'info');
+        }
+    } catch (error) {
+        console.error('Save remedy error:', error);
+        showToast('Failed to save remedy', 'error');
+    }
+}
+
+async function unsaveRemedy(remedyId, buttonElement) {
+    try {
+        const response = await fetch(`${API_CONFIG.BASE_URL}/api/remedies/saved/${remedyId}`, {
+            method: 'DELETE',
+            headers: {
+                'X-User-ID': authManager.getUserId()
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            const icon = buttonElement.querySelector('.save-icon');
+            icon.textContent = '☆';
+            buttonElement.classList.remove('saved');
+            buttonElement.title = 'Save remedy';
+            
+            showToast('Remedy removed from saved', 'info');
+        }
+    } catch (error) {
+        console.error('Unsave remedy error:', error);
+        showToast('Failed to remove remedy', 'error');
+    }
+}
+
+async function checkIfSaved(remedyId) {
+    try {
+        const response = await fetch(`${API_CONFIG.BASE_URL}/api/remedies/is-saved/${remedyId}`, {
+            headers: {
+                'X-User-ID': authManager.getUserId()
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.is_saved) {
+            // Find the button and update it
+            const buttons = document.querySelectorAll('.save-remedy-btn');
+            buttons.forEach(btn => {
+                if (btn.onclick.toString().includes(remedyId)) {
+                    const icon = btn.querySelector('.save-icon');
+                    icon.textContent = '★';
+                    btn.classList.add('saved');
+                    btn.title = 'Unsave remedy';
+                }
+            });
+        }
+    } catch (error) {
+        console.error('Check saved error:', error);
+    }
+}
+
+function showToast(message, type = 'info') {
+    // Remove existing toast
+    const existing = document.querySelector('.toast');
+    if (existing) existing.remove();
+    
+    // Create toast
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    
+    // Animate in
+    setTimeout(() => toast.classList.add('show'), 10);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
 // Export functions for global access
-window.saveRemedy = saveRemedy;
+window.saveRemedy = saveRemedyToDatabase;
+window.toggleSaveRemedy = toggleSaveRemedy;
 window.openDoshaModal = openDoshaModal;
 window.closeDoshaModal = closeDoshaModal;
