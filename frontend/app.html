@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI-powered AYUSH wellness assistant">
+    <meta name="theme-color" content="#8b5cf6">
+    <title>AYUSH AI - Your Wellness Companion</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="css/app-style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Professional Header -->
+    <header class="app-header">
+        <div class="header-content">
+            <div class="brand">
+                <span class="brand-icon">🕉️</span>
+                <span class="brand-name">AYUSH AI</span>
+                <span class="brand-tagline">Wellness Assistant</span>
+            </div>
+            
+            <div class="header-actions">
+                <div class="language-switch">
+                    <button class="lang-option active" data-lang="en">EN</button>
+                    <button class="lang-option" data-lang="hi">हिंदी</button>
+                </div>
+                
+                <div class="user-profile">
+                    <div class="user-avatar">👤</div>
+                    <span class="user-name" id="headerUserName">Guest</span>
+                </div>
+                
+                <button class="logout-btn" id="headerLogout">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="app-container">
+        <!-- Sidebar - History Panel -->
+        <aside class="sidebar" id="historySidebar">
+            <div class="sidebar-header">
+                <h3>📋 Previous Consultations</h3>
+                <button class="sidebar-toggle" id="sidebarToggle">✕</button>
+            </div>
+            <div class="history-list" id="historyList">
+                <div class="empty-history">
+                    <p>No consultations yet</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Hero Welcome Section -->
+            <section class="welcome-hero">
+                <h1 class="welcome-title">
+                    <span class="namaste">🙏 Namaste</span>
+                    <span class="welcome-text">How can I help your wellness today?</span>
+                </h1>
+                
+                <!-- Quick Action Buttons -->
+                <div class="quick-actions">
+                    <button class="quick-btn" data-symptom="I have digestion issues, bloating and constipation">
+                        <span class="quick-icon">🍽️</span>
+                        <span class="quick-label">Digestion Issues</span>
+                    </button>
+                    <button class="quick-btn" data-symptom="I am feeling stressed and anxious">
+                        <span class="quick-icon">🧘</span>
+                        <span class="quick-label">Stress & Anxiety</span>
+                    </button>
+                    <button class="quick-btn" data-symptom="I want to boost my immunity">
+                        <span class="quick-icon">💪</span>
+                        <span class="quick-label">Immunity Boost</span>
+                    </button>
+                </div>
+
+                <!-- Symptom Tag Suggestions -->
+                <div class="symptom-tags">
+                    <span class="tag-label">Common symptoms:</span>
+                    <button class="symptom-tag" data-tag="Headache">Headache</button>
+                    <button class="symptom-tag" data-tag="Cold & Cough">Cold & Cough</button>
+                    <button class="symptom-tag" data-tag="Joint Pain">Joint Pain</button>
+                    <button class="symptom-tag" data-tag="Fatigue">Fatigue</button>
+                    <button class="symptom-tag" data-tag="Insomnia">Insomnia</button>
+                </div>
+            </section>
+
+            <!-- Chat Interface -->
+            <section class="chat-section">
+                <div class="chat-container" id="chatContainer">
+                    <!-- Messages will be added here -->
+                </div>
+
+                <!-- Input Area -->
+                <div class="input-area">
+                    <textarea 
+                        id="symptomInput" 
+                        class="chat-input" 
+                        placeholder="Describe your symptoms in detail..."
+                        rows="3"
+                    ></textarea>
+                    <button class="send-btn" id="sendBtn">
+                        <span class="send-icon">➤</span>
+                        <span class="send-text">Analyze</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Emergency Warning (Hidden by default) -->
+            <div class="emergency-alert" id="emergencyAlert" style="display: none;">
+                <div class="alert-icon">🚨</div>
+                <div class="alert-content">
+                    <h3>Seek Immediate Medical Attention</h3>
+                    <p>Your symptoms may require urgent medical care. Please visit the nearest hospital or call emergency services immediately.</p>
+                    <button class="alert-close" onclick="this.parentElement.parentElement.style.display='none'">✕</button>
+                </div>
+            </div>
+
+            <!-- Safety Disclaimer -->
+            <div class="safety-disclaimer">
+                <p>⚠️ This is an AI-powered wellness assistant for educational purposes. Always consult certified AYUSH practitioners for personalized treatment. <a href="#" class="find-practitioner">Find Certified Practitioner →</a></p>
+            </div>
+        </main>
+
+        <!-- Toggle History Button (Mobile) -->
+        <button class="history-toggle-btn" id="historyToggleBtn">
+            📋 History
+        </button>
+    </div>
+
+    <!-- Dosha Assessment Modal -->
+    <div class="modal" id="doshaModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🕉️ Quick Dosha Assessment</h2>
+                <button class="modal-close" onclick="closeDoshaModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="dosha-question">
+                    <p>Do you feel cold easily?</p>
+                    <div class="dosha-options">
+                        <button class="dosha-option" data-dosha="vata">Yes, often</button>
+                        <button class="dosha-option" data-dosha="pitta">Sometimes</button>
+                        <button class="dosha-option" data-dosha="kapha">Rarely</button>
+                    </div>
+                </div>
+                <div class="dosha-result" id="doshaResult" style="display: none;">
+                    <h3>Your Dominant Dosha: <span id="doshaType"></span></h3>
+                    <p id="doshaDescription"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/wellness-app.js"></script>
+</body>
+</html>
