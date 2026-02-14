@@ -2,9 +2,10 @@
 const API_CONFIG = {
     BASE_URL: 'https://ayush-ai.onrender.com',
     ENDPOINTS: {
-        HEALTH: '/health',
-        ANALYZE: '/api/analyze',
+        HEALTH: '/api/health',
+        ASK: '/api/ask',
         HISTORY: '/api/history',
+        REMEDIES: '/api/remedies'
     }
 };
 

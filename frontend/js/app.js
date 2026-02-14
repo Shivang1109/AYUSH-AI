@@ -90,15 +90,14 @@ async function analyzeSymptoms() {
     hideResults();
     
     try {
-        const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.ANALYZE}`, {
+        const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.ASK}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                symptoms: symptoms,
-                language: currentLanguage,
-                user_id: currentUserId
+                symptom: symptoms,
+                language: currentLanguage
             })
         });
         
@@ -120,39 +119,74 @@ async function analyzeSymptoms() {
 // Display Results
 function displayResults(data) {
     // Condition
-    document.getElementById('conditionName').textContent = data.condition;
+    document.getElementById('conditionName').textContent = data.remedy_name;
     
-    // Severity badge
+    // Severity badge - use source as indicator
     const severityBadge = document.getElementById('severityBadge');
-    severityBadge.textContent = data.severity || 'moderate';
-    severityBadge.className = `severity-badge severity-${data.severity || 'moderate'}`;
+    severityBadge.textContent = data.source === 'dataset' ? 'Database Match' : 'AI Generated';
+    severityBadge.className = `severity-badge severity-${data.source === 'dataset' ? 'mild' : 'moderate'}`;
     
     // Explanation
     document.getElementById('explanation').textContent = data.explanation;
     
-    // Recommendations
+    // Create recommendations from the remedy data
     const recommendationsList = document.getElementById('recommendationsList');
     recommendationsList.innerHTML = '';
     
-    data.recommendations.forEach(rec => {
-        const card = createRecommendationCard(rec);
-        recommendationsList.appendChild(card);
+    // Herb recommendation
+    const herbCard = createRecommendationCard({
+        treatment_type: 'Ayurveda',
+        remedy: `${data.herb}${data.herb_scientific ? ' (' + data.herb_scientific + ')' : ''}`,
+        dosage: data.dosage,
+        duration: 'As prescribed',
+        precautions: [data.warning]
     });
+    recommendationsList.appendChild(herbCard);
+    
+    // Yoga recommendation
+    if (data.yoga && data.yoga !== 'N/A') {
+        const yogaCard = createRecommendationCard({
+            treatment_type: 'Yoga',
+            remedy: data.yoga,
+            dosage: 'Daily practice',
+            duration: 'Regular practice',
+            precautions: ['Practice under guidance', 'Listen to your body']
+        });
+        recommendationsList.appendChild(yogaCard);
+    }
+    
+    // Diet recommendation
+    if (data.diet && data.diet !== 'N/A') {
+        const dietCard = createRecommendationCard({
+            treatment_type: 'Diet',
+            remedy: data.diet,
+            dosage: 'Follow dietary guidelines',
+            duration: 'Ongoing',
+            precautions: ['Consult nutritionist if needed']
+        });
+        recommendationsList.appendChild(dietCard);
+    }
     
     // Safety Warnings
     const warningsList = document.getElementById('warningsList');
     warningsList.innerHTML = '';
     
-    if (data.safety_warnings && data.safety_warnings.length > 0) {
-        data.safety_warnings.forEach(warning => {
-            const li = document.createElement('li');
-            li.textContent = warning;
-            warningsList.appendChild(li);
-        });
-    }
+    const warnings = [
+        data.warning,
+        'Consult a qualified AYUSH practitioner before starting treatment',
+        'Seek immediate medical attention for severe symptoms',
+        'If symptoms persist beyond 2 weeks, consult a doctor'
+    ];
+    
+    warnings.forEach(warning => {
+        const li = document.createElement('li');
+        li.textContent = warning;
+        warningsList.appendChild(li);
+    });
     
     // Disclaimer
-    document.getElementById('disclaimerText').textContent = data.disclaimer;
+    document.getElementById('disclaimerText').textContent = 
+        'This is not medical advice. Always consult a qualified healthcare professional. Dosha balance: ' + data.dosha;
     
     // Show results
     resultsSection.style.display = 'block';

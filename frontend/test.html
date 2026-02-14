@@ -61,14 +61,14 @@
     <div class="test-card">
         <h2>2. Symptom Analysis (English)</h2>
         <p>Test symptom analysis in English</p>
-        <button onclick="testAnalyzeEN()">Test Analyze (EN)</button>
+        <button onclick="testAnalyzeEN()">Test Ask Remedy (EN)</button>
         <div id="analyzeENResult"></div>
     </div>
 
     <div class="test-card">
         <h2>3. Symptom Analysis (Hindi)</h2>
         <p>Test symptom analysis in Hindi</p>
-        <button onclick="testAnalyzeHI()">Test Analyze (HI)</button>
+        <button onclick="testAnalyzeHI()">Test Ask Remedy (HI)</button>
         <div id="analyzeHIResult"></div>
     </div>
 
@@ -79,7 +79,7 @@
             resultDiv.innerHTML = '<div class="status loading">Testing...</div>';
             
             try {
-                const response = await fetch(`${API_CONFIG.BASE_URL}/health`);
+                const response = await fetch(`${API_CONFIG.BASE_URL}/api/health`);
                 const data = await response.json();
                 
                 resultDiv.innerHTML = `
@@ -98,11 +98,11 @@
             resultDiv.innerHTML = '<div class="status loading">Testing... (may take 30s on first request)</div>';
             
             try {
-                const response = await fetch(`${API_CONFIG.BASE_URL}/api/analyze`, {
+                const response = await fetch(`${API_CONFIG.BASE_URL}/api/ask`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        symptoms: "I have a headache and feeling tired",
+                        symptom: "I have a headache and feeling tired",
                         language: "en"
                     })
                 });
@@ -125,11 +125,11 @@
             resultDiv.innerHTML = '<div class="status loading">Testing... (may take 30s on first request)</div>';
             
             try {
-                const response = await fetch(`${API_CONFIG.BASE_URL}/api/analyze`, {
+                const response = await fetch(`${API_CONFIG.BASE_URL}/api/ask`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        symptoms: "मुझे सिरदर्द और थकान है",
+                        symptom: "मुझे सिरदर्द और थकान है",
                         language: "hi"
                     })
                 });
