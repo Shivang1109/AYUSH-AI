@@ -731,6 +731,26 @@ p {
     animation: mic-pulse 0.5s ease-in-out infinite alternate;
 }
 
+/* Clear Button */
+.clear-btn-sacred {
+    padding: 12px 16px;
+    background: var(--maroon-muted);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.clear-btn-sacred:hover {
+    background: var(--maroon-light);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-soft);
+}
+
 @keyframes mic-pulse {
     from {
         transform: scale(1);

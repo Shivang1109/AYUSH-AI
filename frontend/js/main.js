@@ -4,6 +4,79 @@ let isLoginMode = true;
 let currentLanguage = 'en'; // Default language is English
 
 // ============================================
+// PAGE LOADING
+// ============================================
+
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        const loadingScreen = document.getElementById('loadingScreen');
+        if (loadingScreen) {
+            loadingScreen.style.opacity = '0';
+            loadingScreen.style.transition = 'opacity 0.5s ease';
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+            }, 500);
+        }
+    }, 800);
+});
+
+// ============================================
+// DEMO MODE
+// ============================================
+
+function enterDemoMode() {
+    const mockSession = {
+        user: { email: 'demo@ayushai.com', id: 'demo-user-' + Date.now() }
+    };
+    localStorage.setItem('ayush.auth.session', JSON.stringify(mockSession));
+    
+    document.getElementById('landingPage').style.display = 'none';
+    document.getElementById('appPage').style.display = 'block';
+    
+    document.getElementById('userName').textContent = 'Demo User';
+    document.getElementById('userAvatar').textContent = 'D';
+    
+    showToast('Welcome to Demo Mode! Explore all features.');
+}
+
+// ============================================
+// CLEAR INPUT
+// ============================================
+
+function clearInput() {
+    const symptomInput = document.getElementById('symptomInput');
+    const resultsArea = document.getElementById('resultsArea');
+    
+    if (symptomInput) {
+        symptomInput.value = '';
+        symptomInput.focus();
+    }
+    
+    if (resultsArea) {
+        resultsArea.innerHTML = '';
+    }
+    
+    showToast('Input cleared');
+}
+
+// ============================================
+// KEYBOARD SHORTCUTS
+// ============================================
+
+document.addEventListener('DOMContentLoaded', () => {
+    const symptomInput = document.getElementById('symptomInput');
+    
+    if (symptomInput) {
+        symptomInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                analyzeSymptoms();
+            }
+        });
+    }
+});
+
+// ============================================
 // LANGUAGE TOGGLE FUNCTION
 // ============================================
 

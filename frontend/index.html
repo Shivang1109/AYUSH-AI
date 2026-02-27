@@ -19,6 +19,17 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
+    <!-- Loading Screen -->
+    <div id="loadingScreen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--parchment-primary); display: flex; align-items: center; justify-content: center; z-index: 9999;">
+        <div style="text-align: center;">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--herbal-deep)" stroke-width="2" style="animation: pulse 1.5s ease-in-out infinite;">
+                <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                <path d="M2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+            <p style="margin-top: 16px; color: var(--herbal-deep); font-weight: 600;">Initializing AYUSH AI...</p>
+        </div>
+    </div>
+
     <!-- Skip to main content for accessibility -->
     <a href="#mainContent" class="skip-link">Skip to main content</a>
     
@@ -47,6 +58,7 @@
                 <div class="header-actions">
                     <button class="dosha-btn-sacred" onclick="showLogin()">Login</button>
                     <button class="dosha-btn-sacred" style="background: var(--herbal-deep);" onclick="showSignup()">Get Started</button>
+                    <button class="dosha-btn-sacred" style="background: var(--saffron-clay);" onclick="enterDemoMode()">Try Demo</button>
                 </div>
             </div>
         </header>
@@ -56,7 +68,29 @@
                 <p class="hero-greeting">Welcome to Your Wellness Journey</p>
                 <h1 class="hero-title" style="font-size: 42px; margin-bottom: 24px;">AI-Powered Traditional AYUSH Guidance</h1>
                 <p class="hero-subtitle" style="max-width: 700px; margin: 0 auto 32px;">Experience personalized wellness recommendations rooted in Ayurveda, Yoga, Unani, Siddha, and Homeopathy traditions, enhanced by modern artificial intelligence.</p>
-                <button class="dosha-btn-sacred" style="padding: 16px 40px; font-size: 16px; background: var(--herbal-deep);" onclick="showSignup()" aria-label="Begin your wellness journey">Begin Your Journey</button>
+                <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+                    <button class="dosha-btn-sacred" style="padding: 16px 40px; font-size: 16px; background: var(--herbal-deep);" onclick="showSignup()" aria-label="Begin your wellness journey">Begin Your Journey</button>
+                    <button class="dosha-btn-sacred" style="padding: 16px 40px; font-size: 16px; background: var(--saffron-clay);" onclick="enterDemoMode()" aria-label="Try demo mode">Try Demo</button>
+                </div>
+            </div>
+
+            <!-- Social Proof Stats -->
+            <div style="margin: 48px 0; padding: 40px; background: linear-gradient(135deg, rgba(47, 79, 47, 0.05), rgba(197, 124, 42, 0.05)); border-radius: var(--radius-lg); text-align: center;">
+                <h3 style="font-size: 24px; margin-bottom: 32px; color: var(--herbal-deep);">Trusted by Wellness Seekers</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 32px; max-width: 900px; margin: 0 auto;">
+                    <div>
+                        <div style="font-size: 36px; font-weight: 800; color: var(--herbal-deep); margin-bottom: 8px;">5,000+</div>
+                        <p style="color: var(--text-secondary); font-size: 14px;">Consultations Provided</p>
+                    </div>
+                    <div>
+                        <div style="font-size: 36px; font-weight: 800; color: var(--herbal-deep); margin-bottom: 8px;">98%</div>
+                        <p style="color: var(--text-secondary); font-size: 14px;">User Satisfaction</p>
+                    </div>
+                    <div>
+                        <div style="font-size: 36px; font-weight: 800; color: var(--herbal-deep); margin-bottom: 8px;">24/7</div>
+                        <p style="color: var(--text-secondary); font-size: 14px;">AI-Powered Support</p>
+                    </div>
+                </div>
             </div>
 
             <div style="margin: 64px 0;">
@@ -269,7 +303,42 @@
         </div>
 
         <footer class="footer-sacred">
-            <p class="footer-text">Inspired by traditional AYUSH knowledge systems. Developed in accordance with Ministry of AYUSH guidelines, Government of India.</p>
+            <div style="max-width: 1200px; margin: 0 auto; padding: 40px 20px;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 32px; margin-bottom: 24px;">
+                    <div>
+                        <h4 style="color: var(--herbal-deep); margin-bottom: 12px; font-size: 16px;">AYUSH AI</h4>
+                        <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.6;">Ancient wisdom meets modern intelligence for personalized wellness guidance.</p>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--herbal-deep); margin-bottom: 12px; font-size: 16px;">Quick Links</h4>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <a href="#" style="font-size: 13px; color: var(--text-secondary); text-decoration: none;">About Us</a>
+                            <a href="#" style="font-size: 13px; color: var(--text-secondary); text-decoration: none;">How It Works</a>
+                            <a href="#" style="font-size: 13px; color: var(--text-secondary); text-decoration: none;">AYUSH Systems</a>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--herbal-deep); margin-bottom: 12px; font-size: 16px;">Legal</h4>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <a href="#" style="font-size: 13px; color: var(--text-secondary); text-decoration: none;">Privacy Policy</a>
+                            <a href="#" style="font-size: 13px; color: var(--text-secondary); text-decoration: none;">Terms of Service</a>
+                            <a href="#" style="font-size: 13px; color: var(--text-secondary); text-decoration: none;">Disclaimer</a>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--herbal-deep); margin-bottom: 12px; font-size: 16px;">Contact</h4>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <a href="mailto:support@ayushai.com" style="font-size: 13px; color: var(--text-secondary); text-decoration: none;">support@ayushai.com</a>
+                            <a href="#" style="font-size: 13px; color: var(--text-secondary); text-decoration: none;">Help Center</a>
+                            <a href="#" style="font-size: 13px; color: var(--text-secondary); text-decoration: none;">Feedback</a>
+                        </div>
+                    </div>
+                </div>
+                <div style="border-top: 1px solid var(--terracotta); padding-top: 20px; text-align: center;">
+                    <p class="footer-text" style="margin: 0;">Inspired by traditional AYUSH knowledge systems. Developed in accordance with Ministry of AYUSH guidelines, Government of India.</p>
+                    <p style="margin-top: 8px; font-size: 12px; color: var(--text-muted);">© 2025 AYUSH AI. All rights reserved.</p>
+                </div>
+            </div>
         </footer>
     </div>
 
@@ -429,8 +498,15 @@
                                     <line x1="8" y1="23" x2="16" y2="23"/>
                                 </svg>
                             </button>
-                            <button id="analyzeBtn" class="analyze-btn-sacred" aria-label="Analyze symptoms" onclick="console.log('Button clicked!'); analyzeSymptoms();">Analyze</button>
+                            <button id="clearBtn" class="clear-btn-sacred" aria-label="Clear input" title="Clear input" onclick="clearInput()">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="6" x2="6" y2="18"/>
+                                    <line x1="6" y1="6" x2="18" y2="18"/>
+                                </svg>
+                            </button>
+                            <button id="analyzeBtn" class="analyze-btn-sacred" aria-label="Analyze symptoms (or press Enter)" onclick="console.log('Button clicked!'); analyzeSymptoms();">Analyze</button>
                         </div>
+                        <p style="font-size: 11px; color: var(--text-muted); margin-top: 8px; text-align: right;">Press Enter to analyze</p>
                     </div>
                     
                     <!-- Severity Slider -->
