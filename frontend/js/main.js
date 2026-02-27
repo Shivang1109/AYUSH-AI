@@ -279,22 +279,27 @@ function getTimeAgo(date) {
 // ============================================
 
 async function analyzeSymptoms() {
-    console.log('analyzeSymptoms called');
+    console.log('=== analyzeSymptoms called ===');
     const symptomInput = document.getElementById('symptomInput');
     const symptom = symptomInput.value.trim();
     
-    console.log('Symptom:', symptom);
+    console.log('Symptom value:', symptom);
+    console.log('Symptom length:', symptom.length);
     
     if (!symptom) {
+        console.log('No symptom entered');
         showToast('Please describe your symptoms');
         return;
     }
     
     const resultsArea = document.getElementById('resultsArea');
     if (!resultsArea) {
-        console.error('resultsArea element not found');
+        console.error('resultsArea element not found!');
+        alert('Error: Results area not found. Please refresh the page.');
         return;
     }
+    
+    console.log('resultsArea found, proceeding...');
     
     // Check for emergency keywords on frontend
     const emergencyKeywords = [
