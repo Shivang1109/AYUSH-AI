@@ -422,6 +422,114 @@ def search_remedies_ranked(keywords: List[str], language: str = "en") -> List[di
         return []
 
 # ============================================
+# FALLBACK REMEDY DATABASE (for demo/testing)
+# ============================================
+
+FALLBACK_REMEDIES = {
+    'stress': {
+        'name': 'Ashwagandha Stress Relief',
+        'herb': 'Ashwagandha',
+        'herb_scientific': 'Withania somnifera',
+        'dosage': '300-500mg twice daily with warm milk',
+        'yoga': 'Shavasana (Corpse Pose) and Anulom Vilom (Alternate Nostril Breathing)',
+        'diet': 'Warm, nourishing foods. Avoid caffeine and processed foods.',
+        'dosha': 'Balances Vata dosha',
+        'warning': 'Consult practitioner if pregnant or on medication',
+        'explanation': 'Ashwagandha is an adaptogen that reduces cortisol and supports the nervous system',
+        'category': 'mental',
+        'symptoms': ['stress', 'anxiety', 'tension', 'worry', 'overwhelmed'],
+        'match_score': 95
+    },
+    'anxiety': {
+        'name': 'Brahmi Mind Calm',
+        'herb': 'Brahmi',
+        'herb_scientific': 'Bacopa monnieri',
+        'dosage': '250-500mg daily with ghee',
+        'yoga': 'Meditation and Bhramari Pranayama (Bee Breath)',
+        'diet': 'Sattvic diet with warm milk, almonds, and dates',
+        'dosha': 'Calms Vata and Pitta doshas',
+        'warning': 'May cause drowsiness. Avoid before driving.',
+        'explanation': 'Brahmi enhances GABA activity and reduces anxiety naturally',
+        'category': 'mental',
+        'symptoms': ['anxiety', 'nervousness', 'panic', 'fear', 'restless'],
+        'match_score': 92
+    },
+    'headache': {
+        'name': 'Peppermint Headache Relief',
+        'herb': 'Peppermint',
+        'herb_scientific': 'Mentha piperita',
+        'dosage': 'Apply peppermint oil to temples or drink peppermint tea 2-3 times daily',
+        'yoga': 'Balasana (Child\'s Pose) and gentle neck stretches',
+        'diet': 'Stay hydrated. Avoid trigger foods like cheese and chocolate.',
+        'dosha': 'Balances Pitta dosha',
+        'warning': 'Avoid if allergic to mint. Do not ingest essential oil.',
+        'explanation': 'Peppermint relaxes muscles and improves blood flow to reduce headache pain',
+        'category': 'neurological',
+        'symptoms': ['headache', 'migraine', 'head pain', 'tension headache'],
+        'match_score': 90
+    },
+    'digestion': {
+        'name': 'Triphala Digestive Support',
+        'herb': 'Triphala',
+        'herb_scientific': 'Amalaki, Bibhitaki, Haritaki blend',
+        'dosage': '1-2 tablets before bed with warm water',
+        'yoga': 'Pawanmuktasana (Wind-Relieving Pose) and Vajrasana',
+        'diet': 'Eat warm, cooked foods. Avoid cold drinks and heavy meals.',
+        'dosha': 'Balances all three doshas',
+        'warning': 'May cause loose stools initially. Reduce dose if needed.',
+        'explanation': 'Triphala supports digestive fire (Agni) and gentle detoxification',
+        'category': 'digestive',
+        'symptoms': ['digestion', 'bloating', 'constipation', 'indigestion', 'gas', 'acidity'],
+        'match_score': 93
+    },
+    'insomnia': {
+        'name': 'Jatamansi Sleep Support',
+        'herb': 'Jatamansi',
+        'herb_scientific': 'Nardostachys jatamansi',
+        'dosage': '500mg 1 hour before bedtime with warm milk',
+        'yoga': 'Viparita Karani (Legs-Up-Wall) and Yoga Nidra',
+        'diet': 'Light dinner before 7 PM. Warm milk with nutmeg before bed.',
+        'dosha': 'Calms Vata and Pitta doshas',
+        'warning': 'Avoid if pregnant. May enhance sedative effects of medications.',
+        'explanation': 'Jatamansi calms the mind and promotes natural sleep cycles',
+        'category': 'sleep',
+        'symptoms': ['insomnia', 'sleeplessness', 'can\'t sleep', 'sleep problems', 'restless sleep'],
+        'match_score': 91
+    },
+    'fatigue': {
+        'name': 'Shatavari Energy Boost',
+        'herb': 'Shatavari',
+        'herb_scientific': 'Asparagus racemosus',
+        'dosage': '500mg twice daily with milk or water',
+        'yoga': 'Surya Namaskar (Sun Salutation) and Pranayama',
+        'diet': 'Nourishing foods like ghee, nuts, dates, and whole grains',
+        'dosha': 'Balances Vata and Pitta doshas',
+        'warning': 'Consult practitioner if diabetic or on hormone therapy',
+        'explanation': 'Shatavari rejuvenates and builds strength (Ojas)',
+        'category': 'metabolic',
+        'symptoms': ['fatigue', 'tiredness', 'exhaustion', 'low energy', 'weakness'],
+        'match_score': 88
+    }
+}
+
+def get_fallback_remedy(symptom: str) -> Optional[dict]:
+    """
+    Get remedy from fallback database for common symptoms
+    """
+    symptom_lower = symptom.lower()
+    
+    # Direct keyword match
+    for key, remedy in FALLBACK_REMEDIES.items():
+        if key in symptom_lower:
+            return remedy
+        # Check symptom list
+        for sym in remedy['symptoms']:
+            if sym in symptom_lower:
+                return remedy
+    
+    return None
+
+# ============================================
 # AI FALLBACK
 # ============================================
 
@@ -730,8 +838,53 @@ async def ask_remedy(query: QueryRequest, user_id: str = Header(None, alias="X-U
     # LAYER 2: Ranked Symptom Matching
     ranked_remedies = search_remedies_ranked(keywords, query.language)
     
+    # If no database matches, try fallback remedies
     if not ranked_remedies:
-        logger.info("No database matches, using AI fallback")
+        logger.info("No database matches, trying fallback remedies")
+        fallback_remedy = get_fallback_remedy(query.symptom)
+        
+        if fallback_remedy:
+            logger.info(f"Found fallback remedy: {fallback_remedy['name']}")
+            
+            # Calculate response time
+            response_time_ms = (time.time() - start_time) * 1000
+            
+            # Save to history if user is authenticated
+            if user_id:
+                save_query_history(
+                    user_id=user_id,
+                    symptom=query.symptom,
+                    language=query.language,
+                    remedy_id=None,
+                    remedy_name=fallback_remedy['name'],
+                    source='fallback',
+                    matched_keywords=keywords,
+                    dosha_used=None,
+                    ranking_score=fallback_remedy['match_score'],
+                    ai_refinement_used=False,
+                    response_time_ms=response_time_ms
+                )
+            
+            return RemedyResponse(
+                success=True,
+                remedy_id=None,
+                remedy_name=fallback_remedy['name'],
+                herb=fallback_remedy['herb'],
+                herb_scientific=fallback_remedy['herb_scientific'],
+                dosage=fallback_remedy['dosage'],
+                yoga=fallback_remedy['yoga'],
+                diet=fallback_remedy['diet'],
+                dosha=fallback_remedy['dosha'],
+                warning=fallback_remedy['warning'],
+                explanation=fallback_remedy['explanation'],
+                source='dataset',
+                category=fallback_remedy['category'],
+                match_score=fallback_remedy['match_score'],
+                matched_symptoms=fallback_remedy['symptoms'][:3]
+            )
+        
+        # If no fallback, use AI
+        logger.info("No fallback remedy, using AI")
         ai_result = ai_fallback(query.symptom, query.language)
         
         # Calculate response time
