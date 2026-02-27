@@ -362,6 +362,7 @@ async function analyzeSymptoms() {
         }
         
         console.log('Calling API:', CONFIG.API_URL);
+        console.log('Symptom:', symptom);
         
         const response = await fetch(`${CONFIG.API_URL}/api/ask`, {
             method: 'POST',
@@ -377,8 +378,16 @@ async function analyzeSymptoms() {
         
         console.log('API Response status:', response.status);
         
+        if (!response.ok) {
+            throw new Error(`API returned status ${response.status}`);
+        }
+        
         const data = await response.json();
         console.log('API Response data:', data);
+        
+        if (!data || typeof data !== 'object') {
+            throw new Error('Invalid response format from API');
+        }
         
         saveConsultation(symptom, data);
         displayResults(data, symptom);
@@ -387,8 +396,10 @@ async function analyzeSymptoms() {
         console.error('Error:', error);
         resultsArea.innerHTML = `
             <div class="emergency-alert-sacred">
-                <p style="color: var(--maroon-muted);">Unable to analyze symptoms. Please try again.</p>
+                <h3 style="color: var(--maroon-muted); margin-bottom: 12px;">Unable to Analyze Symptoms</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 8px;">We're having trouble connecting to our wellness service. Please try again in a moment.</p>
                 <p style="color: var(--text-muted); font-size: 12px; margin-top: 8px;">Error: ${error.message}</p>
+                <button class="dosha-btn-sacred" onclick="analyzeSymptoms()" style="margin-top: 16px;">Try Again</button>
             </div>
         `;
     }
