@@ -65,6 +65,107 @@ document.getElementById('authForm').addEventListener('submit', (e) => {
 });
 
 // ============================================
+// VOICE INPUT
+// ============================================
+
+let recognition = null;
+let isListening = false;
+
+function initVoiceRecognition() {
+    // Check if browser supports speech recognition
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    
+    if (!SpeechRecognition) {
+        console.warn('Speech recognition not supported in this browser');
+        const voiceBtn = document.getElementById('voiceBtn');
+        if (voiceBtn) {
+            voiceBtn.style.display = 'none'; // Hide button if not supported
+        }
+        return;
+    }
+    
+    recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+    
+    recognition.onstart = () => {
+        isListening = true;
+        const voiceBtn = document.getElementById('voiceBtn');
+        if (voiceBtn) {
+            voiceBtn.classList.add('listening');
+            voiceBtn.title = 'Listening... Click to stop';
+        }
+        showToast('Listening... Speak now');
+    };
+    
+    recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        const symptomInput = document.getElementById('symptomInput');
+        if (symptomInput) {
+            // Append to existing text or replace if empty
+            if (symptomInput.value.trim()) {
+                symptomInput.value += ' ' + transcript;
+            } else {
+                symptomInput.value = transcript;
+            }
+        }
+        showToast('Got it: "' + transcript + '"');
+    };
+    
+    recognition.onerror = (event) => {
+        console.error('Speech recognition error:', event.error);
+        let errorMessage = 'Voice input error';
+        
+        if (event.error === 'no-speech') {
+            errorMessage = 'No speech detected. Please try again.';
+        } else if (event.error === 'not-allowed') {
+            errorMessage = 'Microphone access denied. Please allow microphone access.';
+        } else if (event.error === 'network') {
+            errorMessage = 'Network error. Please check your connection.';
+        }
+        
+        showToast(errorMessage);
+        stopListening();
+    };
+    
+    recognition.onend = () => {
+        stopListening();
+    };
+}
+
+function startListening() {
+    if (!recognition) {
+        showToast('Voice input not available in this browser');
+        return;
+    }
+    
+    try {
+        recognition.start();
+    } catch (error) {
+        console.error('Error starting recognition:', error);
+        showToast('Could not start voice input');
+    }
+}
+
+function stopListening() {
+    isListening = false;
+    const voiceBtn = document.getElementById('voiceBtn');
+    if (voiceBtn) {
+        voiceBtn.classList.remove('listening');
+        voiceBtn.title = 'Click to speak';
+    }
+}
+
+function toggleVoiceInput() {
+    if (isListening) {
+        recognition.stop();
+    } else {
+        startListening();
+    }
+}
+
+// ============================================
 // DOSHA BADGE UPDATE
 // ============================================
 
@@ -574,6 +675,15 @@ window.addEventListener('DOMContentLoaded', () => {
         } catch (e) {
             console.error('Session parse error:', e);
         }
+    }
+    
+    // Initialize voice recognition
+    initVoiceRecognition();
+    
+    // Voice button
+    const voiceBtn = document.getElementById('voiceBtn');
+    if (voiceBtn) {
+        voiceBtn.addEventListener('click', toggleVoiceInput);
     }
     
     // Severity slider
