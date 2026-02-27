@@ -1,6 +1,50 @@
 // AYUSH AI - Sacred Aesthetic App Logic
 
 let isLoginMode = true;
+let currentLanguage = 'en'; // Default language is English
+
+// ============================================
+// LANGUAGE TOGGLE FUNCTION
+// ============================================
+
+function toggleLanguage() {
+    currentLanguage = currentLanguage === 'en' ? 'hi' : 'en';
+    const langText = document.getElementById('langText');
+    const langToggle = document.getElementById('langToggle');
+    
+    if (currentLanguage === 'hi') {
+        langText.textContent = 'English';
+        langToggle.classList.add('active');
+        showToast('भाषा हिंदी में बदल गई');
+    } else {
+        langText.textContent = 'हिंदी';
+        langToggle.classList.remove('active');
+        showToast('Language changed to English');
+    }
+    
+    // Save preference
+    localStorage.setItem('ayush.language', currentLanguage);
+}
+
+// Load language preference on page load
+window.addEventListener('DOMContentLoaded', () => {
+    const savedLanguage = localStorage.getItem('ayush.language');
+    if (savedLanguage) {
+        currentLanguage = savedLanguage;
+        const langText = document.getElementById('langText');
+        const langToggle = document.getElementById('langToggle');
+        
+        if (langToggle && langText) {
+            if (currentLanguage === 'hi') {
+                langText.textContent = 'English';
+                langToggle.classList.add('active');
+            } else {
+                langText.textContent = 'हिंदी';
+                langToggle.classList.remove('active');
+            }
+        }
+    }
+});
 
 // ============================================
 // AUTH FUNCTIONS
@@ -377,7 +421,7 @@ async function analyzeSymptoms() {
             },
             body: JSON.stringify({
                 symptom: symptom,
-                language: 'en'
+                language: currentLanguage // Use the current language setting
             })
         });
         

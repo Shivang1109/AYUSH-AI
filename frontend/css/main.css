@@ -229,6 +229,42 @@ p {
     box-shadow: var(--shadow-soft);
 }
 
+.lang-toggle-btn {
+    padding: 10px 20px;
+    background: var(--card-cream);
+    color: var(--herbal-deep);
+    border: 1.5px solid var(--herbal-deep);
+    border-radius: var(--radius-pill);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.lang-toggle-btn:hover {
+    background: var(--herbal-deep);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-soft);
+}
+
+.lang-toggle-btn:hover svg {
+    stroke: white;
+}
+
+.lang-toggle-btn.active {
+    background: var(--herbal-deep);
+    color: white;
+}
+
+.lang-toggle-btn.active svg {
+    stroke: white;
+}
+
 .lang-toggle-sacred {
     display: flex;
     background: var(--card-cream);
